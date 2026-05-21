@@ -221,12 +221,22 @@ app.get('/', (req, res) => {
   const takreemArts = sectionArticles['تكريم ومسابقات'] || [];
   const fannArts = sectionArticles['الفن والمسابقات'] || [];
 
-  // Ticker
-  const tickerIds = getSetting('ticker_news_ids', [2, 5, 8, 17, 28]);
+  // Ticker — auto-fill with random articles if not enough
+  const tickerIds = getSetting('ticker_news_ids', []);
   const tickerArticles = [];
   for (const tid of tickerIds) {
     const a = getArticle(tid);
     if (a) tickerArticles.push(a);
+  }
+  if (tickerArticles.length < 3) {
+    const all = loadArticles();
+    const shuffled = [...all].sort(() => Math.random() - 0.5);
+    for (const a of shuffled) {
+      if (!tickerArticles.find(t => t.id === a.id)) {
+        tickerArticles.push(a);
+        if (tickerArticles.length >= 10) break;
+      }
+    }
   }
 
   // Hero pins
