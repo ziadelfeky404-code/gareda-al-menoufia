@@ -37,26 +37,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     elseif (!in_array($section, $sections)) $error = 'القسم غير صحيح';
     else {
         if (isset($_FILES['image_file']) && $_FILES['image_file']['error'] === UPLOAD_ERR_OK) {
-            $ext = strtolower(pathinfo($_FILES['image_file']['name'], PATHINFO_EXTENSION));
-            $allowed = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
-            if (in_array($ext, $allowed)) {
-                $newName = 'article_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
-                $dest = $upload_dir . '/' . $newName;
-                if (move_uploaded_file($_FILES['image_file']['tmp_name'], $dest)) {
-                    $image = 'uploads/' . $newName;
-                }
-            }
+            $url = v_upload_image($_FILES['image_file']['tmp_name'], $_FILES['image_file']['name']);
+            if ($url) $image = $url;
         }
         if (isset($_FILES['cover_image_file']) && $_FILES['cover_image_file']['error'] === UPLOAD_ERR_OK) {
-            $ext = strtolower(pathinfo($_FILES['cover_image_file']['name'], PATHINFO_EXTENSION));
-            $allowed = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
-            if (in_array($ext, $allowed)) {
-                $newName = 'cover_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
-                $dest = $upload_dir . '/' . $newName;
-                if (move_uploaded_file($_FILES['cover_image_file']['tmp_name'], $dest)) {
-                    $cover_image = 'uploads/' . $newName;
-                }
-            }
+            $url = v_upload_image($_FILES['cover_image_file']['tmp_name'], $_FILES['cover_image_file']['name']);
+            if ($url) $cover_image = $url;
         }
 
         $tags = array_map('trim', explode(',', $tags_raw));
@@ -81,15 +67,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (isset($_FILES['gallery_files'])) {
             foreach ($_FILES['gallery_files']['error'] as $i => $err) {
                 if ($err === UPLOAD_ERR_OK) {
-                    $ext = strtolower(pathinfo($_FILES['gallery_files']['name'][$i], PATHINFO_EXTENSION));
-                    $allowed = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
-                    if (in_array($ext, $allowed)) {
-                        $newName = 'gallery_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
-                        $dest = $upload_dir . '/' . $newName;
-                        if (move_uploaded_file($_FILES['gallery_files']['tmp_name'][$i], $dest)) {
-                            $gallery[] = ['url' => 'uploads/' . $newName, 'desc' => ''];
-                        }
-                    }
+                    $url = v_upload_image($_FILES['gallery_files']['tmp_name'][$i], $_FILES['gallery_files']['name'][$i]);
+                    if ($url) $gallery[] = ['url' => $url, 'desc' => ''];
                 }
             }
         }

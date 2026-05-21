@@ -19,6 +19,9 @@ if (!function_exists('mb_convert_encoding')) {
         return iconv($from, $to, $str);
     }
 }
+// Vercel compatibility layer
+require_once __DIR__ . '/vercel-compat.php';
+
 // Site configuration
 define('SITE_NAME', 'جامعة المنوفية');
 define('SITE_URL', '');
@@ -89,12 +92,12 @@ function get_next_id() {
 
 function save_articles($data) {
     $file = $GLOBALS['articles_file'];
-    return file_put_contents($file, json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
+    return v_put_data($file, json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
 }
 
 function save_settings($data) {
     global $settings_file;
-    return file_put_contents($settings_file, json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
+    return v_put_data($settings_file, json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
 }
 
 function section_file($section_name) {
@@ -137,7 +140,7 @@ function get_sections() {
     if (empty($saved)) {
         global $settings, $settings_file;
         $settings['sections'] = $defaults;
-        file_put_contents($settings_file, json_encode($settings, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
+        v_put_data($settings_file, json_encode($settings, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
         return $defaults;
     }
     return $saved;
@@ -146,6 +149,6 @@ function get_sections() {
 function save_sections($data) {
     global $settings, $settings_file;
     $settings['sections'] = $data;
-    return file_put_contents($settings_file, json_encode($settings, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
+    return v_put_data($settings_file, json_encode($settings, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
 }
 ?>

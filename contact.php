@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'date' => (new DateTime('now', new DateTimeZone('Africa/Cairo')))->format('Y-m-d H:i:s'),
             'read' => false,
         ];
-        file_put_contents($msgsFile, json_encode($msgs, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
+        v_put_data($msgsFile, json_encode($msgs, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
         $sent = true;
     }
 }

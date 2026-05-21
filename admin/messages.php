@@ -22,7 +22,7 @@ if (isset($_GET['mark'])) {
     foreach ($all as &$m) {
         if ($m['id'] == $markId) $m['read'] = true;
     }
-    file_put_contents($msgsFile, json_encode($all, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
+    v_put_data($msgsFile, json_encode($all, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
     header('Location: messages.php');
     exit;
 }
@@ -34,7 +34,7 @@ if (isset($_GET['delete'])) {
     foreach ($all as $m) {
         if ($m['id'] != $delId) $new[] = $m;
     }
-    file_put_contents($msgsFile, json_encode($new, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
+    v_put_data($msgsFile, json_encode($new, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
     header('Location: messages.php');
     exit;
 }
