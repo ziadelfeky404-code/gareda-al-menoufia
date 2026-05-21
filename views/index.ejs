@@ -1,7 +1,6 @@
 <%- include('partials/header', { title: 'بوابة جامعة المنوفية الإخبارية' }) %>
 <%- include('partials/topbar') %>
 <%- include('partials/navbar') %>
-<style>@keyframes tickerScroll{0%{transform:translateX(0)}100%{transform:translateX(-100%)}}</style>
 
 <!-- ===== BREAKING TICKER ===== -->
 <% if (tickerArticles && tickerArticles.length) { %>
@@ -10,11 +9,11 @@
         <div class="row">
             <div class="col-12 d-flex" style="overflow:hidden;">
                 <div class="ticker-label" style="background:var(--red);padding:8px 20px;font-weight:800;font-size:16px;white-space:nowrap;flex-shrink:0;">عاجل</div>
-                <div class="ticker-content" style="overflow:hidden;padding:8px 0;flex:1;position:relative;">
-                    <div class="ticker-track" style="display:flex;white-space:nowrap;animation:tickerScroll 25s linear infinite;width:max-content;padding-right:100%;" onmouseover="this.style.animationPlayState='paused'" onmouseout="this.style.animationPlayState='running'">
+                <div class="ticker-content" id="tickerContainer" style="overflow:hidden;padding:8px 0;flex:1;position:relative;white-space:nowrap;">
+                    <div class="ticker-track" id="tickerTrack">
                         <% for (var i = 0; i < tickerArticles.length; i++) { var ta = tickerArticles[i]; %>
                         <% if (i > 0) { %><span class="ticker-dot" style="margin:0 12px;color:#ccc;">|</span><% } %>
-                        <a href="/article?id=<%= ta.id %>" style="color:var(--white);font-size:15px;font-weight:500;text-decoration:none;display:inline-block;"><%= ta.title %></a>
+                        <a href="/article?id=<%= ta.id %>" style="color:var(--white);font-size:15px;font-weight:500;text-decoration:none;display:inline-block;margin:0 5px;"><%= ta.title %></a>
                         <% } %>
                     </div>
                 </div>
@@ -338,6 +337,28 @@ document.querySelectorAll('.news-card a[href*="id="],.list-news-item a[href*="id
 </script>
 <% } %>
 <script>
+(function(){
+    var track = document.getElementById('tickerTrack');
+    if (track) {
+        var c = document.getElementById('tickerContainer');
+        track.innerHTML += ' ' + track.innerHTML;
+        var pos = 0, speed = 0.6;
+        track.style.display = 'inline-block';
+        track.style.whiteSpace = 'nowrap';
+        var running = true;
+        track.onmouseenter = function(){ running = false; };
+        track.onmouseleave = function(){ running = true; };
+        (function step(){
+            if (running) {
+                pos -= speed;
+                var half = track.scrollWidth / 2;
+                if (Math.abs(pos) >= half) pos = 0;
+                track.style.transform = 'translate3d(' + pos + 'px,0,0)';
+            }
+            requestAnimationFrame(step);
+        })();
+    }
+})();
 (function(){
     var slides = document.querySelectorAll('#heroSlideshow .hero-main');
     var dots = document.querySelectorAll('#heroSlideshow .slide-dot');
