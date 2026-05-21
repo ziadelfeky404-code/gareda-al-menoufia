@@ -1,0 +1,33 @@
+RewriteEngine On
+
+# Block access to sensitive directories
+RewriteRule ^data/ - [F,L]
+RewriteRule ^includes/ - [F,L]
+RewriteRule ^gate-ahram-clone/ - [F,L]
+
+# Block setup.php after initial setup
+RewriteRule ^setup\.php$ - [F,L]
+
+# Custom 404 page
+ErrorDocument 404 /404.php
+
+# Disable directory listing
+Options -Indexes
+
+# Cache static assets
+<FilesMatch "\.(jpg|jpeg|png|gif|svg|ico|css|js|woff2?)$">
+    Header set Cache-Control "max-age=2592000, public"
+</FilesMatch>
+
+# Compress text files
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json
+</IfModule>
+
+# Security headers
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set X-XSS-Protection "1; mode=block"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>

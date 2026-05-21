@@ -1,0 +1,113 @@
+{
+    "site_name": "جامعة المنوفية",
+    "site_subtitle": "البوابة الإخبارية الرسمية",
+    "site_url": "",
+    "logo_url": "https:\/\/menofia.education\/pluginfile.php\/1\/theme_moove\/logo\/1777367216\/logo.png",
+    "favicon_url": "https:\/\/menofia.education\/pluginfile.php\/1\/theme_moove\/logo\/1777367216\/logo.png",
+    "primary_color": "#157039",
+    "primary_dark": "#0f5a2d",
+    "primary_light": "#1a8a45",
+    "dark_color": "#091e3a",
+    "facebook_url": "https:\/\/www.facebook.com\/menofia.edu.eg\/directory_links?locale=ar_AR",
+    "twitter_url": "https:\/\/x.com\/MinoufiyaUniver",
+    "youtube_url": "https:\/\/youtube.com\/@menoufiauniversitychannel9727",
+    "instagram_url": "https:\/\/www.instagram.com\/menoufiauniversity\/",
+    "linkedin_url": "https:\/\/www.linkedin.com\/school\/menofia-university\/?originalSubdomain=eg",
+    "google_news_url": "https:\/\/news.google.com\/publications\/CAAqBwgKMNj3mgswkv-yAw",
+    "address": "شبين الكوم - المنوفية - مصر",
+    "maps_url": "https:\/\/www.google.com\/maps?q=Gamal+Abd+El-Nasir,+Qism+Shebeen+El-Kom,+Shibin+el+Kom,+Menofia+Governorate+6131567",
+    "phone": "048-2222111",
+    "fax": "048-2222112",
+    "email": "info@mo.edu.eg",
+    "footer_text": "جميع الحقوق محفوظة &copy; 2026 جامعة المنوفية | بوابة الأخبار الرسمية",
+    "editor_name": "رئيس التحرير",
+    "editor_title": "أ.د. أحمد القاصد",
+    "ticker_news_ids": [
+        2,
+        5,
+        8,
+        17,
+        28,
+        30,
+        22,
+        50,
+        20
+    ],
+    "ads": {
+        "section_page": {
+            "type": "image",
+            "image": "uploads\/ads\/bulk_1779343769.jpg",
+            "link": "ad-request.php"
+        },
+        "sidebar_bottom": {
+            "type": "image",
+            "image": "uploads\/ads\/bulk_1779343769.jpg",
+            "link": "ad-request.php"
+        },
+        "sidebar_top": {
+            "type": "image",
+            "image": "uploads\/ads\/bulk_1779343769.jpg",
+            "link": "ad-request.php"
+        },
+        "between_sections": {
+            "type": "image",
+            "image": "uploads\/ads\/bulk_1779343769.jpg",
+            "link": "ad-request.php"
+        },
+        "after_hero": {
+            "type": "image",
+            "image": "uploads\/ads\/bulk_1779343769.jpg",
+            "link": "ad-request.php"
+        },
+        "navbar": {
+            "type": "image",
+            "image": "uploads\/ads\/bulk_1779343769.jpg",
+            "width": 245,
+            "height": 30,
+            "offset_x": -8,
+            "offset_y": -51
+        }
+    },
+    "sections": [
+        {
+            "name": "أخبار المنوفية",
+            "slug": "akhbar",
+            "file": "اخبار المنوفية.htm"
+        },
+        {
+            "name": "منشآت الجامعة",
+            "slug": "monshat",
+            "file": "منشات الجامعه.htm"
+        },
+        {
+            "name": "ندوات ومؤتمرات",
+            "slug": "nadawat",
+            "file": "ندوات ومؤتمرات.htm"
+        },
+        {
+            "name": "تكريم ومسابقات",
+            "slug": "takreem",
+            "file": "تكريم ومسابقات.htm"
+        },
+        {
+            "name": "الفن والمسابقات",
+            "slug": "fann",
+            "file": "صفحه الفن والمسابقات اخير.htm"
+        },
+        {
+            "name": "رياضة ومسابقات",
+            "slug": "ryada",
+            "file": ""
+        },
+        {
+            "name": "قيادات جامعية",
+            "slug": "qiyadat",
+            "file": ""
+        },
+        {
+            "name": "تقارير",
+            "slug": "takarer",
+            "file": ""
+        }
+    ]
+}
