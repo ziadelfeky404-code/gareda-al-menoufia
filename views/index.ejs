@@ -1,21 +1,22 @@
 <%- include('partials/header', { title: 'بوابة جامعة المنوفية الإخبارية' }) %>
 <%- include('partials/topbar') %>
 <%- include('partials/navbar') %>
+<style>@keyframes tickerScroll{0%{transform:translateX(0)}100%{transform:translateX(-100%)}}</style>
 
 <!-- ===== BREAKING TICKER ===== -->
 <% if (tickerArticles && tickerArticles.length) { %>
 <section class="ticker-section" style="background:var(--gray);color:var(--white);margin-top:5px;margin-bottom:10px;">
     <div class="container">
         <div class="row">
-            <div class="col-12 d-flex">
-                <div class="ticker-label d-none d-md-block" style="background:var(--red);padding:8px 20px;font-weight:800;font-size:16px;white-space:nowrap;">عاجل</div>
-                <div class="ticker-content flex-grow-1" style="overflow:hidden;padding:8px 10px;">
-                    <marquee behavior="scroll" direction="right" scrollamount="4" scrolldelay="60" onmouseover="this.stop();" onmouseout="this.start();">
+            <div class="col-12 d-flex" style="overflow:hidden;">
+                <div class="ticker-label" style="background:var(--red);padding:8px 20px;font-weight:800;font-size:16px;white-space:nowrap;flex-shrink:0;">عاجل</div>
+                <div class="ticker-content" style="overflow:hidden;padding:8px 0;flex:1;position:relative;">
+                    <div class="ticker-track" style="display:flex;white-space:nowrap;animation:tickerScroll 25s linear infinite;width:max-content;padding-right:100%;" onmouseover="this.style.animationPlayState='paused'" onmouseout="this.style.animationPlayState='running'">
                         <% for (var i = 0; i < tickerArticles.length; i++) { var ta = tickerArticles[i]; %>
-                        <% if (i > 0) { %><span class="ticker-dot" style="margin:0 12px;">|</span><% } %>
-                        <a href="/article?id=<%= ta.id %>" style="color:var(--white);font-size:15px;font-weight:500;"><%= ta.title %></a>
+                        <% if (i > 0) { %><span class="ticker-dot" style="margin:0 12px;color:#ccc;">|</span><% } %>
+                        <a href="/article?id=<%= ta.id %>" style="color:var(--white);font-size:15px;font-weight:500;text-decoration:none;display:inline-block;"><%= ta.title %></a>
                         <% } %>
-                    </marquee>
+                    </div>
                 </div>
             </div>
         </div>
