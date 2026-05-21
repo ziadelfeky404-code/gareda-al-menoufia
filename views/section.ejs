@@ -1,0 +1,70 @@
+<%- include('partials/header', { title: title }) %>
+<%- include('partials/topbar') %>
+<%- include('partials/navbar') %>
+
+<% if (isAdmin) { %>
+<style>.btn-add-article{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;background:#157039;color:#fff;border-radius:50%;font-size:15px;transition:all .2s;margin-right:8px;text-decoration:none;vertical-align:middle}.btn-add-article:hover{background:#0f5a2d;color:#fff;transform:scale(1.1);text-decoration:none}</style>
+<% } %>
+
+<section class="page-header" style="background:var(--dark);padding:25px 0;margin-bottom:30px;">
+    <div class="container">
+        <h1 style="color:var(--white);font-size:32px;font-weight:900;margin:0;"><%= section %><% if (isAdmin) { %><a href="/admin/quick-add?section=<%= encodeURIComponent(section) %>" class="btn-add-article" title="إضافة مقال" style="display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;background:#157039;color:#fff;border-radius:50%;font-size:15px;transition:all .2s;margin-right:8px;text-decoration:none;vertical-align:middle;"><i class="fas fa-plus"></i></a><% } %></h1>
+        <div class="breadcrumb-custom" style="color:rgba(255,255,255,0.6);font-size:14px;font-weight:400;margin-top:5px;">
+            <a href="/" style="color:rgba(255,255,255,0.8);">الرئيسية</a>
+            <span class="sep" style="margin:0 8px;">/</span>
+            <span><%= section %></span>
+        </div>
+    </div>
+</section>
+
+<section class="pb-4">
+    <div class="container">
+        <div class="section-title-wrap" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;border-bottom:2px solid #e0e0e0;padding-bottom:8px;">
+            <h2 class="section-title" style="font-size:22px;font-weight:800;color:var(--dark);padding-right:12px;border-right:4px solid var(--red);">جميع أخبار <%= section %></h2>
+            <span class="section-more" style="font-size:14px;color:var(--red);font-weight:600;">آخر الأخبار</span>
+        </div>
+
+        <% if (!sectionArticles || sectionArticles.length === 0) { %>
+        <div class="no-results" style="text-align:center;padding:60px 20px;color:#999;">
+            <i class="far fa-frown" style="font-size:48px;margin-bottom:15px;color:#ddd;display:block;"></i>
+            <h4 style="font-size:18px;font-weight:700;color:#666;">لا توجد مقالات في هذا القسم</h4>
+        </div>
+        <% } else { %>
+        <div class="row g-4">
+            <% for (var ai = 0; ai < pageArticles.length; ai++) { var a = pageArticles[ai]; %>
+            <div class="col-lg-4 col-md-6">
+                <div class="news-card card" style="margin-bottom:25px;border:1px solid #eee;border-radius:0;overflow:hidden;transition:all 0.3s ease;background:var(--white);">
+                    <div class="card-img" style="position:relative;overflow:hidden;">
+                        <% if (a.badge) { %><span class="card-badge" style="position:absolute;top:10px;right:10px;background:var(--red);color:var(--white);font-size:12px;font-weight:600;padding:3px 10px;font-family:'Cairo',sans-serif;"><%= a.badge %></span><% } %>
+                        <img src="<%= a.image || '' %>" alt="<%= a.title %>" onerror="this.src='data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'300\' height=\'200\'><rect fill=\'%23f0f0f0\' width=\'300\' height=\'200\'/><text x=\'150\' y=\'105\' text-anchor=\'middle\' fill=\'%23ccc\' font-size=\'14\'>صورة</text></svg>'" style="width:100%;height:200px;object-fit:cover;transition:transform 0.3s;">
+                    </div>
+                    <div class="card-body" style="padding:15px;">
+                        <h3 style="font-size:16px;font-weight:800;line-height:1.4;margin-bottom:8px;"><a href="/article?id=<%= a.id %>" style="color:var(--dark);"><%= a.title %></a></h3>
+                        <p class="card-text" style="font-size:13px;color:var(--gray-light);font-weight:400;margin-bottom:10px;line-height:1.6;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;"><%= (a.paragraphs ? a.paragraphs.join(' ').substring(0, 150) : '') %>...</p>
+                        <div class="card-date" style="font-size:12px;color:#aaa;font-weight:400;font-family:'Cairo',sans-serif;"><i class="far fa-calendar-alt"></i> <%= a.date || '' %></div>
+                        <div class="card-author" style="font-size:12px;color:var(--gray-light);font-weight:400;font-family:'Cairo',sans-serif;margin-top:6px;"><i class="fas fa-user"></i> <%= a.author || 'بوابة الجامعة' %></div>
+                    </div>
+                </div>
+            </div>
+            <% } %>
+        </div>
+
+        <% if (totalPages > 1) { %>
+        <div class="pagination-wrap" style="display:flex;justify-content:center;gap:5px;margin:30px 0 20px;">
+            <% if (page > 1) { %>
+            <a href="/section?slug=<%= slug %>&page=<%= page - 1 %>" style="display:inline-flex;align-items:center;justify-content:center;min-width:36px;height:36px;padding:0 10px;border:1px solid #ddd;font-size:14px;font-weight:600;color:#555;border-radius:4px;transition:all 0.2s;"><i class="fas fa-chevron-right"></i></a>
+            <% } %>
+            <% for (var p = 1; p <= totalPages; p++) { %>
+            <a href="/section?slug=<%= slug %>&page=<%= p %>" <%= p === page ? 'class="active"' : '' %> style="display:inline-flex;align-items:center;justify-content:center;min-width:36px;height:36px;padding:0 10px;border:1px solid #ddd;font-size:14px;font-weight:600;color:#555;border-radius:4px;transition:all 0.2s;<%= p === page ? 'background:var(--red);color:var(--white);border-color:var(--red);' : '' %>"><%= p %></a>
+            <% } %>
+            <% if (page < totalPages) { %>
+            <a href="/section?slug=<%= slug %>&page=<%= page + 1 %>" style="display:inline-flex;align-items:center;justify-content:center;min-width:36px;height:36px;padding:0 10px;border:1px solid #ddd;font-size:14px;font-weight:600;color:#555;border-radius:4px;transition:all 0.2s;"><i class="fas fa-chevron-left"></i></a>
+            <% } %>
+        </div>
+        <% } %>
+        <% } %>
+    </div>
+</section>
+
+<script>var articleData = <%- JSON.stringify(loadArticles()) %>;</script>
+<%- include('partials/footer') %>

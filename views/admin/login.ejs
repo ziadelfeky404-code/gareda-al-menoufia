@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title><%= title %> - <%= getSetting('site_name') %></title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Cairo',sans-serif;background:linear-gradient(135deg,#0f5a2d 0%,#157039 50%,#1a8a45 100%);min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:right}
+.login-wrap{width:100%;max-width:420px;padding:20px}
+.login-box{background:#fff;border-radius:16px;padding:40px 30px;box-shadow:0 20px 60px rgba(0,0,0,0.3)}
+.login-logo{text-align:center;margin-bottom:25px}
+.login-logo img{max-width:140px;max-height:70px}
+.login-logo h2{font-size:20px;font-weight:900;color:var(--red);margin-top:10px}
+.login-box h3{font-size:22px;font-weight:800;color:#091e3a;text-align:center;margin-bottom:5px}
+.login-box p{font-size:13px;color:#818b9d;text-align:center;font-weight:400;margin-bottom:25px}
+.form-control{border-radius:8px;border:2px solid #e0e0e0;padding:12px 15px;font-size:14px;font-weight:500;font-family:'Cairo',sans-serif;transition:border-color 0.2s}
+.form-control:focus{border-color:#157039;box-shadow:0 0 0 3px rgba(21,112,57,0.15)}
+.form-floating{position:relative;margin-bottom:18px}
+.form-floating i{position:absolute;top:50%;right:14px;transform:translateY(-50%);color:#818b9d;z-index:5;font-size:16px}
+.form-floating input{padding-right:42px}
+.btn-login{background:#157039;color:#fff;border:none;padding:12px;border-radius:8px;font-size:16px;font-weight:800;cursor:pointer;transition:background 0.2s;width:100%;font-family:'Cairo',sans-serif}
+.btn-login:hover{background:#0f5a2d}
+.alert-error{background:#fde8e8;color:#c0392b;padding:12px 15px;border-radius:8px;font-size:14px;font-weight:400;margin-bottom:20px;text-align:center}
+.login-footer{text-align:center;margin-top:22px;font-size:13px;color:#818b9d;font-weight:400}
+.login-footer a{color:#157039;font-weight:700}
+:root{--red:#157039}
+</style>
+</head>
+<body>
+<div class="login-wrap">
+<div class="login-box">
+<div class="login-logo">
+<img src="<%= logo %>" alt="<%= getSetting('site_name') %>">
+<h2><%= getSetting('site_name') %></h2>
+</div>
+<h3>تسجيل الدخول</h3>
+<p>لوحة التحكم - إدارة المحتوى</p>
+<% if (error) { %>
+<div class="alert-error"><i class="fas fa-exclamation-circle ms-1"></i> <%= error %></div>
+<% } %>
+<form method="post" action="/admin/login">
+<div class="form-floating">
+<i class="fas fa-user"></i>
+<input type="text" name="username" class="form-control" placeholder="اسم المستخدم" required dir="rtl">
+</div>
+<div class="form-floating">
+<i class="fas fa-lock"></i>
+<input type="password" name="password" class="form-control" placeholder="كلمة المرور" required dir="rtl">
+</div>
+<button type="submit" class="btn-login"><i class="fas fa-sign-in-alt ms-1"></i> دخول</button>
+</form>
+<div class="login-footer">
+<a href="/"><i class="fas fa-arrow-right ms-1"></i> العودة للموقع</a>
+</div>
+</div>
+</div>
+</body>
+</html>

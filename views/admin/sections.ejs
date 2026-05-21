@@ -1,0 +1,70 @@
+<%- include('../partials/admin-header', { title: title }) %>
+<style>
+.section-card{border:1px solid #eee;border-radius:8px;margin-bottom:15px;padding:18px 20px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.04);display:flex;align-items:center;justify-content:space-between;transition:box-shadow 0.2s}
+.section-card:hover{box-shadow:0 2px 8px rgba(0,0,0,0.08)}
+.section-card .sec-info{display:flex;align-items:center;gap:12px}
+.section-card .sec-icon{width:40px;height:40px;border-radius:8px;background:#e8f5e9;color:#2e7d32;display:flex;align-items:center;justify-content:center;font-size:18px}
+.section-card .sec-details h4{font-size:15px;font-weight:800;color:#333;margin:0 0 2px}
+.section-card .sec-details span{font-size:12px;color:#888;font-weight:400}
+.section-card .sec-actions{display:flex;gap:6px}
+.section-form{border:2px dashed #ddd;border-radius:8px;padding:25px;margin-bottom:25px;background:#fafafa}
+.section-form .form-row{display:flex;gap:10px;align-items:end}
+.section-form .form-row .form-group{flex:1}
+.section-form label{font-size:13px;font-weight:700;color:#555;display:block;margin-bottom:3px}
+.section-form input,.section-form select{padding:8px 12px;border:2px solid #ddd;border-radius:6px;font-size:14px;font-family:'Cairo',sans-serif;width:100%}
+.section-form input:focus,.section-form select:focus{outline:none;border-color:#157039}
+</style>
+<div class="admin-wrap">
+<div class="container-fluid">
+<div class="row">
+<div class="col-12 mb-4">
+<h1 class="admin-title"><i class="fas fa-tags ms-2"></i> إدارة الأقسام</h1>
+</div>
+</div>
+<% if (message) { %>
+<div class="alert alert-success"><i class="fas fa-check-circle ms-1"></i> <%= message %></div>
+<% } %>
+<% if (error) { %>
+<div class="alert alert-danger"><i class="fas fa-exclamation-circle ms-1"></i> <%= error %></div>
+<% } %>
+<div class="section-form">
+<h5 style="font-size:16px;font-weight:800;margin-bottom:15px"><i class="fas fa-plus-circle ms-1"></i> إضافة قسم جديد</h5>
+<form method="post" action="/admin/sections">
+<div class="form-row">
+<div class="form-group">
+<label>اسم القسم</label>
+<input type="text" name="name" placeholder="مثال: أخبار الجامعة" required>
+</div>
+<div class="form-group">
+<label>الرابط (slug)</label>
+<input type="text" name="slug" placeholder="مثال: university-news" required>
+</div>
+<div class="form-group">
+<button type="submit" class="btn btn-primary" style="background:#157039;border:none;padding:8px 20px;border-radius:6px;font-size:14px;font-weight:700;white-space:nowrap"><i class="fas fa-plus"></i> إضافة</button>
+</div>
+</div>
+</form>
+</div>
+<h4 style="font-size:18px;font-weight:800;color:#333;margin-bottom:15px">الأقسام الحالية</h4>
+<% var sArr = sectionsData || []; if (sArr.length === 0) { %>
+<div style="text-align:center;padding:40px;color:#999;font-weight:400">لا توجد أقسام مضافة بعد</div>
+<% } else { for (var i = 0; i < sArr.length; i++) { var sec = sArr[i]; %>
+<div class="section-card">
+<div class="sec-info">
+<div class="sec-icon"><i class="fas fa-folder"></i></div>
+<div class="sec-details">
+<h4><%= sec.name %></h4>
+<span>/<%= sec.slug %></span>
+</div>
+</div>
+<div class="sec-actions">
+<form method="post" action="/admin/sections" style="display:inline" onsubmit="return confirm('حذف القسم "<%= sec.name %>"؟')">
+<input type="hidden" name="delete_slug" value="<%= sec.slug %>">
+<button type="submit" class="btn btn-danger btn-sm" title="حذف"><i class="fas fa-trash"></i></button>
+</form>
+</div>
+</div>
+<% } } %>
+</div>
+</div>
+<%- include('../partials/admin-footer') %>

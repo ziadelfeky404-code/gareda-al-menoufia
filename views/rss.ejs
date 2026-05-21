@@ -1,0 +1,22 @@
+<%# XML RSS Feed - no HTML %>
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+<title><%= siteName %></title>
+<link><%= siteUrl %></link>
+<description>آخر الأخبار من <%= siteName %></description>
+<language>ar</language>
+<lastBuildDate><%= new Date().toUTCString() %></lastBuildDate>
+<atom:link href="<%= siteUrl %>/rss" rel="self" type="application/rss+xml"/>
+<% for (var i = 0; i < latest.length; i++) { var a = latest[i]; %>
+<item>
+<title><%= a.title %></title>
+<link><%= siteUrl %>/article?id=<%= a.id %></link>
+<guid><%= siteUrl %>/article?id=<%= a.id %></guid>
+<description><%= (a.paragraphs && a.paragraphs[0] ? a.paragraphs[0].substring(0, 300) : '') %></description>
+<pubDate><%= parseArticleDate(a.date) %></pubDate>
+<category><%= a.section %></category>
+</item>
+<% } %>
+</channel>
+</rss>

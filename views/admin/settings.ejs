@@ -1,0 +1,164 @@
+<%- include('../partials/admin-header', { title: title }) %>
+<style>
+.settings-form .form-group{margin-bottom:22px}
+.settings-form label{display:block;font-size:14px;font-weight:700;color:#333;margin-bottom:5px}
+.settings-form .form-control{border:2px solid #ddd;border-radius:6px;padding:10px 14px;font-size:14px;font-family:'Cairo',sans-serif;font-weight:400;width:100%}
+.settings-form .form-control:focus{border-color:#157039;outline:none;box-shadow:0 0 0 3px rgba(21,112,57,0.1)}
+.settings-form .form-help{font-size:11px;color:#888;font-weight:400;margin-top:3px}
+.settings-section-title{font-size:16px;font-weight:800;color:#157039;margin:25px 0 15px;padding-bottom:8px;border-bottom:2px solid #157039}
+</style>
+<div class="admin-wrap">
+<div class="container-fluid">
+<div class="row">
+<div class="col-12 mb-4">
+<h1 class="admin-title"><i class="fas fa-cog ms-2"></i> الإعدادات</h1>
+</div>
+</div>
+<% if (message) { %>
+<div class="alert alert-success"><i class="fas fa-check-circle ms-1"></i> <%= message %></div>
+<% } %>
+<% if (error) { %>
+<div class="alert alert-danger"><i class="fas fa-exclamation-circle ms-1"></i> <%= error %></div>
+<% } %>
+<div class="admin-card">
+<div class="card-body-custom">
+<form method="post" action="/admin/settings" class="settings-form">
+<h4 class="settings-section-title"><i class="fas fa-globe ms-1"></i> الإعدادات العامة</h4>
+<div class="row">
+<div class="col-md-6">
+<div class="form-group">
+<label>اسم الموقع</label>
+<input type="text" name="site_name" class="form-control" value="<%= settings.site_name || '' %>">
+</div>
+</div>
+<div class="col-md-6">
+<div class="form-group">
+<label>رابط الموقع</label>
+<input type="text" name="site_url" class="form-control" value="<%= settings.site_url || '' %>">
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-md-4">
+<div class="form-group">
+<label>رابط الشعار (Logo URL)</label>
+<input type="text" name="logo_url" class="form-control" value="<%= settings.logo_url || '' %>">
+</div>
+</div>
+<div class="col-md-4">
+<div class="form-group">
+<label>الأيقونة (Favicon URL)</label>
+<input type="text" name="favicon_url" class="form-control" value="<%= settings.favicon_url || '' %>">
+</div>
+</div>
+<div class="col-md-4">
+<div class="form-group">
+<label>تذييل الموقع</label>
+<textarea name="footer_text" class="form-control" rows="2"><%= settings.footer_text || '' %></textarea>
+</div>
+</div>
+</div>
+<h4 class="settings-section-title"><i class="fas fa-user-tie ms-1"></i> معلومات رئيس التحرير</h4>
+<div class="row">
+<div class="col-md-6">
+<div class="form-group">
+<label>اسم رئيس التحرير</label>
+<input type="text" name="editor_name" class="form-control" value="<%= settings.editor_name || '' %>">
+</div>
+</div>
+<div class="col-md-6">
+<div class="form-group">
+<label>المنصب</label>
+<input type="text" name="editor_title" class="form-control" value="<%= settings.editor_title || '' %>">
+</div>
+</div>
+</div>
+<h4 class="settings-section-title"><i class="fas fa-address-card ms-1"></i> معلومات الاتصال</h4>
+<div class="row">
+<div class="col-md-4">
+<div class="form-group">
+<label>العنوان</label>
+<input type="text" name="address" class="form-control" value="<%= settings.address || '' %>">
+</div>
+</div>
+<div class="col-md-4">
+<div class="form-group">
+<label>الهاتف</label>
+<input type="text" name="phone" class="form-control" value="<%= settings.phone || '' %>">
+</div>
+</div>
+<div class="col-md-4">
+<div class="form-group">
+<label>الفاكس</label>
+<input type="text" name="fax" class="form-control" value="<%= settings.fax || '' %>">
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-md-6">
+<div class="form-group">
+<label>البريد الإلكتروني</label>
+<input type="text" name="email" class="form-control" value="<%= settings.email || '' %>">
+</div>
+</div>
+<div class="col-md-6">
+<div class="form-group">
+<label>رابط خرائط Google</label>
+<input type="text" name="maps_url" class="form-control" value="<%= settings.maps_url || '' %>">
+</div>
+</div>
+</div>
+<h4 class="settings-section-title"><i class="fas fa-share-alt ms-1"></i> روابط التواصل الاجتماعي</h4>
+<div class="row">
+<div class="col-md-3">
+<div class="form-group">
+<label><i class="fab fa-facebook ms-1" style="color:#1877f2"></i> فيسبوك</label>
+<input type="text" name="facebook_url" class="form-control" value="<%= settings.facebook_url || '' %>">
+</div>
+</div>
+<div class="col-md-3">
+<div class="form-group">
+<label><i class="fab fa-twitter ms-1" style="color:#1da1f2"></i> تويتر</label>
+<input type="text" name="twitter_url" class="form-control" value="<%= settings.twitter_url || '' %>">
+</div>
+</div>
+<div class="col-md-3">
+<div class="form-group">
+<label><i class="fab fa-youtube ms-1" style="color:#ff0000"></i> يوتيوب</label>
+<input type="text" name="youtube_url" class="form-control" value="<%= settings.youtube_url || '' %>">
+</div>
+</div>
+<div class="col-md-3">
+<div class="form-group">
+<label><i class="fab fa-instagram ms-1" style="color:#e4405f"></i> إنستغرام</label>
+<input type="text" name="instagram_url" class="form-control" value="<%= settings.instagram_url || '' %>">
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-md-6">
+<div class="form-group">
+<label><i class="fab fa-linkedin ms-1" style="color:#0a66c2"></i> لينكد إن</label>
+<input type="text" name="linkedin_url" class="form-control" value="<%= settings.linkedin_url || '' %>">
+</div>
+</div>
+<div class="col-md-3">
+<div class="form-group">
+<label>عدد المقالات في الشريط</label>
+<input type="number" name="ticker_count" class="form-control" value="<%= settings.ticker_count || 5 %>" min="0" max="20">
+</div>
+</div>
+<div class="col-md-3">
+<div class="form-group">
+<label>نص الشريط</label>
+<input type="text" name="ticker_text" class="form-control" value="<%= settings.ticker_text || 'عاجل' %>">
+</div>
+</div>
+</div>
+<button type="submit" class="btn btn-primary mt-3" style="background:#157039;border:none;padding:12px 40px;font-size:16px;font-weight:800;border-radius:6px"><i class="fas fa-save ms-1"></i> حفظ الإعدادات</button>
+</form>
+</div>
+</div>
+</div>
+</div>
+<%- include('../partials/admin-footer') %>

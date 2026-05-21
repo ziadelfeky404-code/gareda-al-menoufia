@@ -1,0 +1,278 @@
+<%- include('partials/header', { title: title }) %>
+<%- include('partials/topbar') %>
+<%- include('partials/navbar') %>
+
+<!-- ===== BREADCRUMB ===== -->
+<section class="breadcrumb-section" style="background:#f8f8f8;padding:12px 0;border-bottom:1px solid #eee;">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb" style="margin:0;font-size:14px;font-weight:400;background:none;">
+                <li class="breadcrumb-item"><a href="/" style="color:var(--red);"><i class="fas fa-home ms-1"></i>الرئيسية</a></li>
+                <li class="breadcrumb-item"><a href="/section?slug=<%= sectionSlug(article.section) %>" style="color:var(--red);"><%= article.section %></a></li>
+                <li class="breadcrumb-item active" style="color:#666;"><%= article.title.substring(0, 60) %>...</li>
+            </ol>
+        </nav>
+    </div>
+</section>
+
+<!-- ===== FLOATING SHARE ===== -->
+<div class="floating-share" id="floatingShare" style="position:fixed;right:15px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:5px;z-index:999;opacity:0;visibility:hidden;transition:opacity 0.3s">
+    <a class="fl-fb" href="<%= shareFb %>" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;color:#fff;font-size:16px;transition:transform 0.2s;background:#1877f2;"><i class="fab fa-facebook-f"></i></a>
+    <a class="fl-tw" href="<%= shareTw %>" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;color:#fff;font-size:16px;transition:transform 0.2s;background:#1da1f2;"><i class="fab fa-twitter"></i></a>
+    <a class="fl-in" href="<%= shareLi %>" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;color:#fff;font-size:16px;transition:transform 0.2s;background:#0a66c2;"><i class="fab fa-linkedin-in"></i></a>
+</div>
+
+<!-- ===== MAIN CONTENT ===== -->
+<section class="pb-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8">
+                <% if (article.cover_image) { %>
+                <div class="article-cover" style="margin-bottom:20px;">
+                    <img src="<%= article.cover_image %>" alt="<%= article.title %>" style="width:100%;max-height:600px;object-fit:scale-down;background:#f5f5f5;border-radius:6px;">
+                </div>
+                <% } %>
+
+                <h1 class="article-title" style="font-size:28px;font-weight:900;line-height:1.4;color:var(--dark);margin-bottom:15px;margin-top:20px;"><%= article.title %></h1>
+
+                <div class="article-meta" style="padding:12px 0;border-top:1px solid #eee;border-bottom:1px solid #eee;margin-bottom:20px;display:flex;flex-wrap:wrap;align-items:center;gap:12px;font-size:14px;color:var(--gray-light);font-weight:400;">
+                    <span><i class="far fa-calendar-alt ms-1"></i> <span><%= article.date || '' %></span></span>
+                    <span><i class="far fa-user ms-1"></i> <span class="author-name" style="color:var(--dark);font-weight:700;"><%= article.author || 'بوابة الجامعة' %></span></span>
+                    <span><i class="far fa-folder ms-1"></i> <span><%= article.section %></span></span>
+                    <% if (isAdmin) { %>
+                    <span><a href="/admin/article-edit/<%= article.id %>" class="edit-article-btn" style="display:inline-flex;align-items:center;gap:4px;background:#f39c12;color:#fff;padding:4px 14px;border-radius:4px;font-size:13px;font-weight:700;transition:background .2s;text-decoration:none;"><i class="fas fa-edit"></i> تعديل</a></span>
+                    <span><button onclick="confirmDelete(<%= article.id %>)" style="background:none;border:none;color:#e74c3c;font-size:13px;font-weight:700;cursor:pointer;padding:0"><i class="fas fa-trash"></i> حذف</button></span>
+                    <% } %>
+                    <div class="share-icons" style="display:flex;gap:6px;margin-right:auto;">
+                        <a class="share-fb" href="<%= shareFb %>" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;color:#fff;font-size:14px;transition:opacity 0.2s;background:#1877f2;"><i class="fab fa-facebook-f"></i></a>
+                        <a class="share-tw" href="<%= shareTw %>" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;color:#fff;font-size:14px;transition:opacity 0.2s;background:#1da1f2;"><i class="fab fa-twitter"></i></a>
+                        <a class="share-in" href="<%= shareLi %>" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;color:#fff;font-size:14px;transition:opacity 0.2s;background:#0a66c2;"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+
+                <div class="article-img-wrap" style="margin-bottom:25px;">
+                    <img src="<%= article.image || '' %>" alt="<%= article.title %>" style="width:100%;max-height:600px;object-fit:scale-down;background:#f5f5f5;border-radius:4px;">
+                    <div class="img-caption" style="font-size:13px;color:var(--gray-light);font-weight:400;padding:8px 0;font-family:'Cairo',sans-serif;border-bottom:1px solid #eee;"><%= article.title %></div>
+                </div>
+
+                <div class="fs-controls" style="display:flex;align-items:center;gap:8px;margin-bottom:15px;padding:10px 15px;background:#f8f8f8;border-radius:50px;border:1px solid #eee;width:fit-content;">
+                    <span class="fs-label" style="font-size:13px;color:#666;font-weight:500;margin-left:5px;">حجم الخط:</span>
+                    <button onclick="changeFontSize(-1)" class="fs-btn" title="تصغير الخط" style="background:var(--red);color:#fff;border:none;padding:6px 14px;border-radius:50px;font-size:14px;font-weight:800;cursor:pointer;transition:all .2s;font-family:var(--fonts);">أ-</button>
+                    <button onclick="changeFontSize(1)" class="fs-btn" title="تكبير الخط" style="background:var(--red);color:#fff;border:none;padding:6px 14px;border-radius:50px;font-size:14px;font-weight:800;cursor:pointer;transition:all .2s;font-family:var(--fonts);">أ+</button>
+                    <button onclick="resetFontSize()" class="fs-btn" title="الحجم الافتراضي" style="background:#999;color:#fff;border:none;padding:6px 14px;border-radius:50px;font-size:14px;font-weight:800;cursor:pointer;transition:all .2s;font-family:var(--fonts);">إعادة</button>
+                </div>
+
+                <div class="article-body" id="articleBody">
+                    <% for (var pi = 0; pi < article.paragraphs.length; pi++) { var p = article.paragraphs[pi]; %>
+                    <p style="font-size:16px;font-weight:400;line-height:1.8;color:#333;margin-bottom:18px;"><%= p.replace(/\n/g, '<br>') %></p>
+                    <% } %>
+                </div>
+
+                <% if (article.images && article.images.length) { %>
+                <div class="article-gallery" style="margin:30px 0;padding:20px;background:#fafafa;border-radius:8px;border:1px solid #eee;">
+                    <h3 class="gallery-title" style="font-size:18px;font-weight:800;color:var(--dark);margin-bottom:15px;"><i class="fas fa-images ms-1"></i> معرض الصور</h3>
+                    <div class="gallery-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;">
+                        <% for (var gi = 0; gi < article.images.length; gi++) { var img = article.images[gi]; %>
+                        <div class="gallery-item" style="border-radius:6px;overflow:hidden;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,0.06);">
+                            <a href="<%= img.url %>">
+                                <img src="<%= img.url %>" alt="<%= img.desc || '' %>" class="lightbox-trigger" style="width:100%;height:160px;object-fit:scale-down;background:#eee;transition:transform .3s;display:block;cursor:pointer;">
+                            </a>
+                            <% if (img.desc) { %>
+                            <div class="gallery-desc" style="font-size:12px;color:#666;font-weight:400;padding:8px 10px;text-align:center;"><%= img.desc %></div>
+                            <% } %>
+                        </div>
+                        <% } %>
+                    </div>
+                </div>
+                <% } %>
+
+                <% var artTags = Array.isArray(article.tags) ? article.tags : []; if (artTags.length) { %>
+                <div class="article-tags" style="margin:25px 0;padding:15px 0;border-top:1px solid #eee;border-bottom:1px solid #eee;">
+                    <span class="tags-label" style="font-size:14px;font-weight:700;color:var(--dark);margin-left:10px;"><i class="fas fa-tags ms-1"></i>كلمات البحث:</span>
+                    <% for (var ti = 0; ti < artTags.length; ti++) { var tag = artTags[ti]; %>
+                    <a href="/search?q=<%= encodeURIComponent(tag) %>" class="tag-btn" style="display:inline-block;background:#f0f0f0;color:#555;font-size:13px;font-weight:500;padding:5px 14px;margin:3px 4px;border-radius:20px;transition:all 0.2s;"><%= tag %></a>
+                    <% } %>
+                </div>
+                <% } %>
+
+                <div class="article-share-bottom" style="display:flex;align-items:center;gap:10px;padding:15px 0;margin-bottom:20px;">
+                    <span style="font-size:15px;font-weight:700;color:var(--dark);"><i class="fas fa-share-alt ms-1"></i> مشاركة</span>
+                    <div class="share-icons" style="display:flex;gap:6px;">
+                        <a class="share-fb" href="<%= shareFb %>" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;color:#fff;font-size:15px;transition:opacity 0.2s;background:#1877f2;"><i class="fab fa-facebook-f"></i></a>
+                        <a class="share-tw" href="<%= shareTw %>" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;color:#fff;font-size:15px;transition:opacity 0.2s;background:#1da1f2;"><i class="fab fa-twitter"></i></a>
+                        <a class="share-in" href="<%= shareLi %>" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;color:#fff;font-size:15px;transition:opacity 0.2s;background:#0a66c2;"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+
+                <% if (related && related.length) { %>
+                <div class="section-title-wrap" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:15px;border-bottom:2px solid #e0e0e0;padding-bottom:8px;">
+                    <h2 class="section-title" style="font-size:20px;font-weight:800;color:var(--dark);padding-right:12px;border-right:4px solid var(--red);">اقرأ أيضًا</h2>
+                </div>
+                <% for (var ri = 0; ri < related.length; ri++) { var ra = related[ri]; %>
+                <div class="related-card" style="display:flex;gap:12px;margin-bottom:15px;padding-bottom:15px;border-bottom:1px solid #eee;">
+                    <img src="<%= ra.image || '' %>" alt="<%= ra.title %>" style="width:110px;height:75px;object-fit:cover;flex-shrink:0;border-radius:3px;">
+                    <div class="related-body" style="flex:1;">
+                        <h4 style="font-size:14px;font-weight:700;line-height:1.4;margin:0 0 4px;"><a href="/article?id=<%= ra.id %>" style="color:var(--dark);"><%= ra.title %></a></h4>
+                        <div class="related-date" style="font-size:11px;color:var(--gray-light);font-weight:400;"><i class="far fa-clock ms-1"></i><%= ra.date || '' %></div>
+                    </div>
+                </div>
+                <% } %>
+                <% } %>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="sticky-sidebar" style="position:sticky;top:80px;">
+                    <div class="sidebar-box" style="background:#fafafa;border:1px solid #e8e8e8;margin-bottom:20px;">
+                        <div class="sidebar-header" style="background:var(--dark);color:var(--white);padding:10px 15px;font-size:17px;font-weight:800;"><i class="fas fa-fire ms-1"></i> الأكثر قراءة</div>
+                        <div class="sidebar-body" style="padding:12px;">
+                            <% for (var mi = 0; mi < mostRead.length; mi++) { var mr = mostRead[mi]; %>
+                            <div class="sidebar-most-item" style="padding:10px 0;border-bottom:1px solid #eee;display:flex;gap:12px;align-items:flex-start;">
+                                <span class="most-num" style="background:var(--red);color:var(--white);width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;margin-top:2px;border-radius:2px;"><%= mi + 1 %></span>
+                                <h5 style="font-size:13px;font-weight:700;line-height:1.4;margin:0;"><a href="/article?id=<%= mr.id %>" style="color:var(--dark);"><%= mr.title %></a></h5>
+                            </div>
+                            <% } %>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-box" style="background:#fafafa;border:1px solid #e8e8e8;margin-bottom:20px;">
+                        <div class="sidebar-header" style="background:var(--dark);color:var(--white);padding:10px 15px;font-size:17px;font-weight:800;"><i class="far fa-clock ms-1"></i> أخبار الساعة</div>
+                        <div class="sidebar-body" style="padding:12px;">
+                            <% for (var hi = 0; hi < hourlyNews.length; hi++) { var hn = hourlyNews[hi]; %>
+                            <div class="sidebar-hour-item" style="padding:8px 0;border-bottom:1px dashed #eee;display:flex;gap:8px;align-items:flex-start;">
+                                <span class="hour-dot" style="width:6px;height:6px;background:var(--red);border-radius:50%;flex-shrink:0;margin-top:6px;"></span>
+                                <h5 style="font-size:12px;font-weight:500;line-height:1.4;margin:0;color:#555;"><a href="/article?id=<%= hn.id %>" style="color:#555;"><%= hn.title %></a></h5>
+                            </div>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+.fs-controls{display:flex;align-items:center;gap:8px;margin-bottom:15px;padding:10px 15px;background:#f8f8f8;border-radius:50px;border:1px solid #eee;width:fit-content}
+.fs-label{font-size:13px;color:#666;font-weight:500;margin-left:5px}
+.fs-btn{background:var(--red);color:#fff;border:none;padding:6px 14px;border-radius:50px;font-size:14px;font-weight:800;cursor:pointer;transition:all .2s;font-family:var(--fonts)}
+.fs-btn:hover{background:var(--red-dark);transform:scale(1.05)}
+.fs-btn:last-child{background:#999}
+.fs-btn:last-child:hover{background:#777}
+</style>
+<script>
+(function(){
+    var fs = document.getElementById('floatingShare');
+    if (fs) {
+        window.addEventListener('scroll', function(){
+            if (window.scrollY > 400) fs.classList.add('show');
+            else fs.classList.remove('show');
+        });
+    }
+})();
+</script>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:99999;align-items:center;justify-content:center">
+    <div style="background:#fff;border-radius:12px;padding:30px;max-width:440px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.3);text-align:center;position:relative;overflow:hidden">
+        <div style="margin:15px 0 10px">
+            <div style="width:60px;height:60px;border-radius:50%;background:#fde8e8;display:flex;align-items:center;justify-content:center;margin:0 auto">
+                <i class="fas fa-exclamation-triangle" style="font-size:28px;color:#e74c3c"></i>
+            </div>
+        </div>
+        <h3 style="font-size:18px;font-weight:800;color:#333;margin-bottom:6px">حذف المقال</h3>
+        <p style="font-size:14px;color:#666;font-weight:400;margin-bottom:4px">هل أنت متأكد من حذف المقال</p>
+        <p id="modalArticleTitle" style="font-size:14px;font-weight:800;color:#c0392b;margin-bottom:15px;max-height:40px;overflow:hidden">"<%= article.title.replace(/"/g, '\\"') %>"</p>
+        <p style="font-size:12px;color:#999;font-weight:400;margin-bottom:15px;background:#fafafa;padding:8px 12px;border-radius:6px"><i class="fas fa-info-circle"></i> هذا الإجراء لا يمكن التراجع عنه</p>
+        <div style="margin:15px 0;text-align:center">
+            <div style="font-size:11px;color:#888;font-weight:400;margin-bottom:4px">انتظر <span id="countdownNum">10</span> ثوانٍ لتأكيد الحذف</div>
+            <div style="background:#eee;border-radius:10px;height:10px;overflow:hidden;width:80%;margin:0 auto">
+                <div id="countdownBar" style="height:100%;width:0%;background:#e74c3c;border-radius:10px;transition:width 1s linear"></div>
+            </div>
+        </div>
+        <div style="display:flex;gap:10px;justify-content:center;margin-top:18px">
+            <button id="confirmDeleteBtn" disabled style="background:#ccc;color:#fff;border:none;padding:10px 30px;border-radius:6px;font-size:14px;font-weight:800;cursor:not-allowed;transition:all .2s;min-width:100px">
+                <i class="fas fa-trash"></i> <span id="confirmBtnText">حذف (10)</span>
+            </button>
+            <button onclick="closeModal()" style="background:#f0f0f0;color:#555;border:none;padding:10px 24px;border-radius:6px;font-size:14px;font-weight:700;cursor:pointer">
+                <i class="fas fa-times"></i> إلغاء
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+var deleteId = <%= article.id %>;
+var countdownInterval = null;
+
+function confirmDelete(id) {
+    deleteId = id;
+    document.getElementById('deleteModal').style.display = 'flex';
+    var sec = 10;
+    var btn = document.getElementById('confirmDeleteBtn');
+    var bar = document.getElementById('countdownBar');
+    var num = document.getElementById('countdownNum');
+    var txt = document.getElementById('confirmBtnText');
+    btn.disabled = true;
+    btn.style.background = '#ccc';
+    btn.style.cursor = 'not-allowed';
+    bar.style.width = '0%';
+    num.textContent = sec;
+    txt.textContent = 'حذف (' + sec + ')';
+    if (countdownInterval) clearInterval(countdownInterval);
+    countdownInterval = setInterval(function(){
+        sec--;
+        var pct = ((10 - sec) / 10) * 100;
+        bar.style.width = pct + '%';
+        num.textContent = sec;
+        txt.textContent = 'حذف (' + sec + ')';
+        if (sec <= 0) {
+            clearInterval(countdownInterval);
+            countdownInterval = null;
+            btn.disabled = false;
+            btn.style.background = '#c0392b';
+            btn.style.cursor = 'pointer';
+            txt.textContent = 'تأكيد الحذف';
+        }
+    }, 1000);
+}
+
+document.getElementById('confirmDeleteBtn').addEventListener('click', function(){
+    if (this.disabled) return;
+    if (deleteId > 0) {
+        var ref = document.referrer || '';
+        var sameOrigin = ref.indexOf(location.protocol + '//' + location.host) === 0;
+        var redirectTo = (sameOrigin && ref.indexOf('/article') === -1) ? ref : '/section?slug=' + '<%= sectionSlug(article.section || '') %>';
+        window.location.href = '/admin/article-delete/' + deleteId + '?redirect=' + encodeURIComponent(redirectTo);
+    }
+});
+
+function closeModal() {
+    document.getElementById('deleteModal').style.display = 'none';
+    if (countdownInterval) { clearInterval(countdownInterval); countdownInterval = null; }
+}
+
+// Font size controls
+(function(){
+    var body = document.getElementById('articleBody');
+    if (!body) return;
+    var size = parseInt(localStorage.getItem('articleFontSize')) || 100;
+    function applySize() {
+        [body].concat(Array.from(body.querySelectorAll('p, li, span, div'))).forEach(function(el){
+            if (el) el.style.fontSize = size + '%';
+        });
+    }
+    applySize();
+    window.changeFontSize = function(d) {
+        size = Math.min(180, Math.max(60, size + d * 10));
+        applySize();
+        localStorage.setItem('articleFontSize', size);
+    };
+    window.resetFontSize = function() {
+        size = 100;
+        applySize();
+        localStorage.setItem('articleFontSize', 100);
+    };
+})();
+</script>
+
+<%- include('partials/footer') %>

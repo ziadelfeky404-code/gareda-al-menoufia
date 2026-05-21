@@ -1,12 +1,13 @@
 {
-  "functions": {
-    "api/**/*.php": {
-      "runtime": "vercel-php@0.7.1"
+  "version": 2,
+  "builds": [
+    {
+      "src": "api/index.js",
+      "use": "@vercel/node"
     }
-  },
-  "routes": [
-    { "src": "/uploads/(.*)", "dest": "/uploads/$1" },
-    { "src": "/(.*)\\.(css|js|jpg|jpeg|png|gif|svg|ico|woff2|php)$", "dest": "/$1.$2" },
-    { "src": "/(.*)", "dest": "/api/index.php" }
+  ],
+  "rewrites": [
+    { "source": "/uploads/(.*)", "destination": "/uploads/$1" },
+    { "source": "/(.*)", "destination": "/api/index.js" }
   ]
 }

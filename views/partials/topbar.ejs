@@ -1,0 +1,32 @@
+<section class="top-bar">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="top-links">
+                    <span id="headerDate" class="ms-1"></span>
+                    <span class="divider">|</span>
+                    <a href="/contact">اتصل بنا</a>
+                    <a href="<%= getSetting('facebook_url') %>" class="social-icon" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                    <a href="<%= getSetting('twitter_url') %>" class="social-icon" target="_blank"><i class="fab fa-twitter"></i></a>
+                    <a href="<%= getSetting('youtube_url') %>" class="social-icon" target="_blank"><i class="fab fa-youtube"></i></a>
+                    <a href="<%= getSetting('instagram_url') %>" class="social-icon" target="_blank"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="row align-items-center">
+            <div class="col-auto">
+                <div class="logo-area">
+                    <a href="/">
+                        <img src="<%= getSetting('logo_url') %>" alt="<%= getSetting('site_name') %>" style="height:120px;width:auto;">
+                    </a>
+                </div>
+            </div>
+            <div class="col text-center d-none d-md-block">
+                <div class="office-info">
+                    <span><%= getSetting('editor_name', 'رئيس التحرير') %></span>
+                    <p><%= getSetting('editor_title', 'أ.د. أحمد القاصد') %></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

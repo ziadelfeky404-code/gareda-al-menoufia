@@ -1,0 +1,63 @@
+<%- include('../partials/admin-header', { title: title }) %>
+<style>
+.quick-form .form-group{margin-bottom:15px}
+.quick-form label{display:block;font-size:13px;font-weight:700;color:#555;margin-bottom:4px}
+.quick-form .form-control{border:2px solid #ddd;border-radius:6px;padding:9px 12px;font-size:14px;font-family:'Cairo',sans-serif;font-weight:400;width:100%}
+.quick-form .form-control:focus{border-color:#157039;outline:none;box-shadow:0 0 0 3px rgba(21,112,57,0.1)}
+.quick-form textarea.form-control{min-height:80px;resize:vertical}
+.quick-form select.form-control{height:40px}
+.help-text{font-size:11px;color:#888;font-weight:400;margin-top:2px}
+.preset-info{background:#e8f5e9;padding:10px 14px;border-radius:6px;margin-bottom:15px;font-size:13px;color:#2e7d32;font-weight:400}
+</style>
+<div class="admin-wrap">
+<div class="container-fluid">
+<div class="row">
+<div class="col-12 mb-4">
+<h1 class="admin-title"><i class="fas fa-bolt ms-2"></i> إضافة سريعة</h1>
+</div>
+</div>
+<% if (message) { %>
+<div class="alert alert-success"><i class="fas fa-check-circle ms-1"></i> <%= message %></div>
+<% } %>
+<% if (error) { %>
+<div class="alert alert-danger"><i class="fas fa-exclamation-circle ms-1"></i> <%= error %></div>
+<% } %>
+<% if (presetSection) { %>
+<div class="preset-info"><i class="fas fa-info-circle ms-1"></i> ستتم الإضافة إلى قسم: <strong><%= presetSection %></strong></div>
+<% } %>
+<div class="admin-card">
+<div class="card-body-custom">
+<form method="post" action="/admin/quick-add" class="quick-form">
+<div class="row">
+<div class="col-md-8">
+<div class="form-group">
+<label>عنوان المقال <span style="color:red">*</span></label>
+<input type="text" name="title" class="form-control" required value="<%= body.title || '' %>">
+</div>
+</div>
+<div class="col-md-4">
+<div class="form-group">
+<label>القسم</label>
+<select name="section" class="form-control">
+<% for (var i = 0; i < sections.length; i++) { var sName = typeof sections[i] === 'object' ? sections[i].name : sections[i]; %>
+<option value="<%= sName %>" <%= (presetSection === sName || body.section === sName) ? 'selected' : '' %>><%= sName %></option>
+<% } %>
+</select>
+</div>
+</div>
+</div>
+<div class="form-group">
+<label>الرابط (URL الصورة)</label>
+<input type="text" name="image" class="form-control" placeholder="https://..." value="<%= body.image || '' %>">
+</div>
+<div class="form-group">
+<label>المحتوى (اختياري)</label>
+<textarea name="content" class="form-control" placeholder="نص المقال (كل سطر فقرة)"><%= body.content || '' %></textarea>
+</div>
+<button type="submit" class="btn btn-primary" style="background:#157039;border:none;padding:10px 30px;font-size:15px;font-weight:800;border-radius:6px"><i class="fas fa-bolt ms-1"></i> إضافة</button>
+</form>
+</div>
+</div>
+</div>
+</div>
+<%- include('../partials/admin-footer') %>

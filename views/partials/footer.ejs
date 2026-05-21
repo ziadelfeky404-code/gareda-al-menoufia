@@ -1,0 +1,161 @@
+<footer class="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="footer-logo" style="margin-bottom:10px;">
+                    <a href="/"><img src="<%= getSetting('logo_url') %>" alt="<%= getSetting('site_name') %>" style="height:170px;width:auto;"></a>
+                </div>
+                <h5>عن الجامعة</h5>
+                <p style="font-size:14px;font-weight:400;line-height:1.7;color:#aaa;">جامعة المنوفية إحدى الجامعات المصرية الرائدة، تأسست عام 1976، وتضم 17 كلية ومعهداً، وتسعى دائماً نحو التميز في التعليم والبحث العلمي وخدمة المجتمع.</p>
+                <div class="footer-social">
+                    <a href="<%= getSetting('facebook_url') %>" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                    <a href="<%= getSetting('twitter_url') %>" target="_blank"><i class="fab fa-twitter"></i></a>
+                    <a href="<%= getSetting('youtube_url') %>" target="_blank"><i class="fab fa-youtube"></i></a>
+                    <a href="<%= getSetting('instagram_url') %>" target="_blank"><i class="fab fa-instagram"></i></a>
+                    <a href="<%= getSetting('linkedin_url') %>" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-6 mb-4">
+                <h5>أقسام رئيسية</h5>
+                <ul>
+                    <% var footerSecs = getSections(); for (var i = 0; i < footerSecs.length; i++) { var s = footerSecs[i]; %>
+                    <li><a href="/section?slug=<%= s.slug %>"><%= s.name %></a></li>
+                    <% } %>
+                </ul>
+            </div>
+            <div class="col-lg-6 col-md-6 mb-4">
+                <h5>اتصل بنا</h5>
+                <ul>
+                    <li><a href="<%= getSetting('maps_url') %>" target="_blank"><i class="fas fa-map-marker-alt ms-2"></i><%= getSetting('address') %></a></li>
+                    <li><a href="tel:<%= getSetting('phone') %>"><i class="fas fa-phone ms-2"></i><%= getSetting('phone') %></a></li>
+                    <li><a href="#"><i class="fas fa-fax ms-2"></i><%= getSetting('fax') %></a></li>
+                    <li><a href="mailto:<%= getSetting('email') %>"><i class="fas fa-envelope ms-2"></i><%= getSetting('email') %></a></li>
+                    <li style="margin-top:10px;"><a href="/contact" style="color:var(--red);font-weight:700;"><i class="fas fa-arrow-left ms-1"></i> صفحة الاتصال</a></li>
+                </ul>
+                <div style="margin-top:10px;">
+                    <span style="color:var(--red); font-weight:800; font-size:20px;"><%= getSetting('site_name') %></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <div class="container">
+            <%- getSetting('footer_text') %>
+            <div style="margin-top:6px;font-size:12px;opacity:0.6">Powered by Ziad Elfeky</div>
+        </div>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+(function(){
+    var now = new Date();
+    var days = ['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+    var months = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+    var el = document.getElementById('headerDate');
+    if (el) el.textContent = days[now.getDay()] + ' ' + now.getDate() + ' ' + months[now.getMonth()] + ' ' + now.getFullYear();
+
+    document.querySelectorAll('.searchInput').forEach(function(inp){
+        inp.addEventListener('keypress', function(e){
+            if(e.key === 'Enter'){var q=this.value.trim();if(q)window.location='/search?q='+encodeURIComponent(q);}
+        });
+    });
+})();
+
+(function(){
+    var lightbox = document.getElementById('imageLightbox');
+    if (!lightbox) {
+        lightbox = document.createElement('div');
+        lightbox.id = 'imageLightbox';
+        lightbox.innerHTML = '<span class="lightbox-close">&times;</span><img class="lightbox-img" id="lightboxImg" src="">';
+        document.body.appendChild(lightbox);
+
+        var img = document.getElementById('lightboxImg');
+        var zoomLevel = 1;
+        var isZoomed = false;
+        var panX = 0, panY = 0;
+
+        function resetZoom() {
+            zoomLevel = 1; isZoomed = false; panX = 0; panY = 0;
+            img.className = 'lightbox-img'; img.style.transform = '';
+            lightbox.style.cursor = 'zoom-in';
+        }
+
+        lightbox.addEventListener('click', function(e){
+            if (e.target === lightbox || e.target.classList.contains('lightbox-close')) {
+                lightbox.classList.remove('show');
+                resetZoom();
+            }
+        });
+
+        img.addEventListener('dblclick', function(e){
+            e.stopPropagation();
+            if (!isZoomed) {
+                isZoomed = true; zoomLevel = 2.5;
+                var rect = img.getBoundingClientRect();
+                var x = (e.clientX - rect.left) / rect.width;
+                var y = (e.clientY - rect.top) / rect.height;
+                panX = (0.5 - x) * (zoomLevel - 1) * 100;
+                panY = (0.5 - y) * (zoomLevel - 1) * 100;
+                img.className = 'lightbox-img zoomed';
+                img.style.transform = 'translate(' + panX + 'px, ' + panY + 'px) scale(' + zoomLevel + ')';
+                lightbox.style.cursor = 'grab';
+            } else {
+                resetZoom();
+            }
+        });
+
+        lightbox.addEventListener('wheel', function(e){
+            if (!img.src || img.src.indexOf('data:') === 0) return;
+            e.preventDefault();
+            var delta = e.deltaY > 0 ? -0.2 : 0.2;
+            var newZoom = Math.max(1, Math.min(5, zoomLevel + delta));
+            if (newZoom === 1 && zoomLevel > 1) { resetZoom(); return; }
+            zoomLevel = newZoom; isZoomed = zoomLevel > 1;
+            if (isZoomed) {
+                var rect = img.getBoundingClientRect();
+                var x = (e.clientX - rect.left) / rect.width;
+                var y = (e.clientY - rect.top) / rect.height;
+                panX = (0.5 - x) * (zoomLevel - 1) * 100;
+                panY = (0.5 - y) * (zoomLevel - 1) * 100;
+                img.className = 'lightbox-img zoomed';
+                img.style.transform = 'translate(' + panX + 'px, ' + panY + 'px) scale(' + zoomLevel + ')';
+                lightbox.style.cursor = 'grab';
+            } else {
+                resetZoom();
+            }
+        }, { passive: false });
+
+        var isDragging = false, startX, startY, currentPanX = 0, currentPanY = 0;
+        img.addEventListener('mousedown', function(e){
+            if (!isZoomed) return;
+            isDragging = true; startX = e.clientX - panX; startY = e.clientY - panY;
+            currentPanX = panX; currentPanY = panY;
+            lightbox.style.cursor = 'grabbing';
+        });
+        document.addEventListener('mousemove', function(e){
+            if (!isDragging) return;
+            panX = e.clientX - startX; panY = e.clientY - startY;
+            img.style.transform = 'translate(' + panX + 'px, ' + panY + 'px) scale(' + zoomLevel + ')';
+        });
+        document.addEventListener('mouseup', function(){
+            if (isDragging) { isDragging = false; lightbox.style.cursor = 'grab'; }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') { lightbox.classList.remove('show'); resetZoom(); }
+        });
+    }
+    document.querySelectorAll('.article-img-wrap img, .article-cover img, .gallery-item img, .gallery-item a, .lightbox-trigger').forEach(function(el){
+        el.addEventListener('click', function(e){
+            e.preventDefault();
+            e.stopPropagation();
+            var src = this.tagName === 'A' ? (this.querySelector('img') ? this.querySelector('img').src : this.href) : this.src;
+            document.getElementById('lightboxImg').src = src;
+            lightbox.classList.add('show');
+        });
+    });
+})();
+</script>
+</body>
+</html>

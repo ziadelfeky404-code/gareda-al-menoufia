@@ -1,0 +1,102 @@
+<%- include('../partials/admin-header', { title: title }) %>
+<style>
+.form-group{margin-bottom:20px}
+.form-group label{display:block;font-size:14px;font-weight:700;color:#333;margin-bottom:5px}
+.form-group .form-control{border:2px solid #ddd;border-radius:6px;padding:10px 14px;font-size:14px;font-family:'Cairo',sans-serif;font-weight:400;width:100%}
+.form-group .form-control:focus{border-color:#157039;box-shadow:0 0 0 3px rgba(21,112,57,0.1);outline:none}
+.form-group textarea.form-control{resize:vertical;min-height:120px}
+.form-group select.form-control{height:44px}
+.form-help{font-size:11px;color:#888;font-weight:400;margin-top:3px}
+.images-section{border:2px dashed #ddd;border-radius:8px;padding:20px;margin-bottom:20px;background:#fafafa}
+.images-section .image-row{display:flex;gap:10px;margin-bottom:10px;align-items:center}
+.images-section .image-row input{flex:1}
+.images-section .image-row input[type="text"]{flex:2}
+.btn-remove-image{background:#e74c3c;color:#fff;border:none;width:32px;height:32px;border-radius:4px;cursor:pointer;font-size:14px}
+.btn-add-image{background:#157039;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:700}
+</style>
+<div class="admin-wrap">
+<div class="container-fluid">
+<div class="row">
+<div class="col-12 mb-4">
+<h1 class="admin-title"><i class="fas fa-plus-circle ms-2"></i> إضافة مقال جديد</h1>
+</div>
+</div>
+<% if (message) { %>
+<div class="alert alert-success"><i class="fas fa-check-circle ms-1"></i> <%= message %></div>
+<% } %>
+<% if (error) { %>
+<div class="alert alert-danger"><i class="fas fa-exclamation-circle ms-1"></i> <%= error %></div>
+<% } %>
+<div class="admin-card">
+<div class="card-body-custom">
+<form method="post" action="/admin/article-add" enctype="multipart/form-data">
+<div class="row">
+<div class="col-md-8">
+<div class="form-group">
+<label>عنوان المقال <span style="color:red">*</span></label>
+<input type="text" name="title" class="form-control" required value="<%= body.title || '' %>">
+</div>
+</div>
+<div class="col-md-4">
+<div class="form-group">
+<label>القسم <span style="color:red">*</span></label>
+<select name="section" class="form-control" required>
+<% for (var i = 0; i < sections.length; i++) { var sName = typeof sections[i] === 'object' ? sections[i].name : sections[i]; %>
+<option value="<%= sName %>" <%= (body.section === sName) ? 'selected' : '' %>><%= sName %></option>
+<% } %>
+</select>
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-md-6">
+<div class="form-group">
+<label>الصورة الرئيسية</label>
+<input type="text" name="image" class="form-control" placeholder="رابط URL الصورة" value="<%= body.image || '' %>">
+<div class="form-help">رابط مباشر للصورة (يفضل imgBB)</div>
+</div>
+</div>
+<div class="col-md-6">
+<div class="form-group">
+<label>صورة الغلاف (اختياري)</label>
+<input type="text" name="cover_image" class="form-control" placeholder="رابط URL" value="<%= body.cover_image || '' %>">
+</div>
+</div>
+</div>
+<div class="form-group">
+<label>محتوى المقال</label>
+<textarea name="content" class="form-control" rows="10"><%= body.content || '' %></textarea>
+<div class="form-help">كل سطر يمثل فقرة منفصلة</div>
+</div>
+<div class="form-group">
+<label>الوسوم (tags)</label>
+<input type="text" name="tags" class="form-control" placeholder="وسم1, وسم2, وسم3" value="<%= body.tags || '' %>">
+</div>
+<div class="form-group">
+<label>المؤلف</label>
+<input type="text" name="author" class="form-control" placeholder="اسم المؤلف" value="<%= body.author || 'بوابة الجامعة' %>">
+</div>
+<div class="images-section" id="imagesSection">
+<label style="display:block;font-size:14px;font-weight:700;color:#333;margin-bottom:10px"><i class="fas fa-images ms-1"></i> معرض الصور</label>
+<div class="image-row">
+<input type="text" name="gallery_url[]" class="form-control" placeholder="رابط الصورة">
+<input type="text" name="gallery_desc[]" class="form-control" placeholder="وصف الصورة (اختياري)">
+</div>
+<button type="button" class="btn-add-image mt-2" onclick="addGalleryRow()"><i class="fas fa-plus"></i> إضافة صورة أخرى</button>
+</div>
+<button type="submit" class="btn btn-primary" style="background:#157039;border:none;padding:12px 30px;font-size:16px;font-weight:800;border-radius:6px"><i class="fas fa-save ms-1"></i> حفظ المقال</button>
+</form>
+</div>
+</div>
+</div>
+</div>
+<script>
+function addGalleryRow() {
+var section = document.getElementById('imagesSection');
+var row = document.createElement('div');
+row.className = 'image-row';
+row.innerHTML = '<input type="text" name="gallery_url[]" class="form-control" placeholder="رابط الصورة"><input type="text" name="gallery_desc[]" class="form-control" placeholder="وصف الصورة (اختياري)"><button type="button" class="btn-remove-image" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>';
+section.insertBefore(row, section.lastElementChild);
+}
+</script>
+<%- include('../partials/admin-footer') %>
