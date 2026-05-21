@@ -285,7 +285,5 @@ a, a:hover { text-decoration: none; color: var(--dark); }
     </div>
 </section>
 
-<div class="container"><?php render_ad('section_page'); ?></div>
-
 <?php render_articles_json_script(); ?>
 <?php render_footer(); ?>

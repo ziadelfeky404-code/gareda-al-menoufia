@@ -60,8 +60,7 @@ $admin = $_SESSION['admin'];
             <a href="articles.php" class="nav-item"><i class="fas fa-newspaper"></i> المقالات</a>
             <a href="article-add.php" class="nav-item"><i class="fas fa-plus-circle"></i> إضافة مقال</a>
             <a href="messages.php" class="nav-item"><i class="fas fa-envelope"></i> الرسائل<?php if ($unreadMsgs > 0): ?> <span style="background:#e74c3c;color:#fff;border-radius:10px;padding:1px 8px;font-size:11px;margin-right:4px"><?= $unreadMsgs ?></span><?php endif; ?></a>
-            <a href="ads.php" class="nav-item"><i class="fas fa-ad"></i> الإعلانات</a>
-            <a href="ad-requests.php" class="nav-item"><i class="fas fa-envelope"></i> طلبات الإعلانات</a>
+
             <a href="sections.php" class="nav-item"><i class="fas fa-layer-group"></i> الأقسام</a>
             <a href="settings.php" class="nav-item"><i class="fas fa-cogs"></i> الإعدادات</a>
             <a href="logout.php" class="nav-item"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</a>
