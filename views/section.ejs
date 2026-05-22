@@ -5,10 +5,37 @@
 <% if (isAdmin) { %>
 <style>.btn-add-article{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;background:#157039;color:#fff;border-radius:50%;font-size:15px;transition:all .2s;margin-right:8px;text-decoration:none;vertical-align:middle}.btn-add-article:hover{background:#0f5a2d;color:#fff;transform:scale(1.1);text-decoration:none}</style>
 <% } %>
+<style>
+.timeline-wrap{position:relative;padding:20px 0}
+.timeline-wrap::before{content:'';position:absolute;top:0;bottom:0;right:35px;width:4px;background:linear-gradient(to bottom,var(--red),#c0392b);border-radius:2px}
+.timeline-card{position:relative;padding-right:75px;margin-bottom:30px}
+.timeline-card::before{content:attr(data-num);position:absolute;right:18px;top:20px;width:38px;height:38px;background:var(--red);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;z-index:2;box-shadow:0 2px 8px rgba(231,76,60,0.4)}
+.timeline-card .card-inner{background:#fff;border:1px solid #eee;border-radius:8px;overflow:hidden;transition:all .3s;cursor:pointer}
+.timeline-card .card-inner:hover{box-shadow:0 5px 25px rgba(0,0,0,0.1);transform:translateY(-3px)}
+.timeline-card .card-inner a{text-decoration:none;color:inherit}
+.timeline-card .timeline-img{width:100%;height:220px;object-fit:cover;display:block;border-bottom:3px solid var(--red)}
+.timeline-card .timeline-body{padding:18px 22px}
+.timeline-card .timeline-body h3{font-size:20px;font-weight:800;color:var(--dark);margin:0 0 8px}
+.timeline-card .timeline-body .meta{font-size:13px;color:#888;font-family:'Cairo',sans-serif}
+.timeline-card .timeline-body .meta i{margin-left:5px}
+@media(min-width:768px){
+  .timeline-wrap{padding-right:60px}
+  .timeline-wrap::before{right:100px}
+  .timeline-card{padding-right:140px}
+  .timeline-card::before{right:83px;width:38px;height:38px}
+  .timeline-card .card-inner{display:flex;align-items:stretch}
+  .timeline-card .timeline-img{width:260px;height:auto;min-height:180px;flex-shrink:0;border-bottom:0;border-left:3px solid var(--red)}
+  .timeline-card .timeline-body{flex:1}
+}
+.view-toggle{display:inline-flex;gap:4px;background:#f5f5f5;border-radius:6px;padding:3px;margin-right:15px}
+.view-toggle a{padding:5px 12px;border-radius:4px;font-size:13px;color:#666;text-decoration:none;transition:all .2s}
+.view-toggle a.active{background:var(--dark);color:#fff}
+.view-toggle a:hover:not(.active){background:#e0e0e0}
+</style>
 
 <section class="page-header" style="background:var(--dark);padding:25px 0;margin-bottom:30px;">
     <div class="container">
-        <h1 style="color:var(--white);font-size:32px;font-weight:900;margin:0;"><%= section %><% if (isAdmin) { %><a href="/admin/quick-add?section=<%= encodeURIComponent(section) %>" class="btn-add-article" title="إضافة مقال" style="display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;background:#157039;color:#fff;border-radius:50%;font-size:15px;transition:all .2s;margin-right:8px;text-decoration:none;vertical-align:middle;"><i class="fas fa-plus"></i></a><% } %></h1>
+        <h1 style="color:var(--white);font-size:32px;font-weight:900;margin:0;"><%= section %><% if (isAdmin) { %><a href="/admin/quick-add?section=<%= encodeURIComponent(section) %>" class="btn-add-article" title="إضافة مقال" style="display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;background:#157039;color:#fff;border-radius:50%;font-size:15px;transition:all .2s;margin-right:8px;text-decoration:none;vertical-align:middle;"><i class="fas fa-plus"></i></a><a href="/admin/section-order/<%= slug %>" title="ترتيب المقالات" style="display:inline-flex;align-items:center;height:34px;background:#6c3483;color:#fff;padding:0 14px;border-radius:17px;font-size:13px;text-decoration:none;transition:all .2s;vertical-align:middle;margin-right:5px;"><i class="fas fa-sort" style="margin-left:5px;"></i> ترتيب</a><% } %></h1>
         <div class="breadcrumb-custom" style="color:rgba(255,255,255,0.6);font-size:14px;font-weight:400;margin-top:5px;">
             <a href="/" style="color:rgba(255,255,255,0.8);">الرئيسية</a>
             <span class="sep" style="margin:0 8px;">/</span>
@@ -19,15 +46,41 @@
 
 <section class="pb-4">
     <div class="container">
-        <div class="section-title-wrap" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;border-bottom:2px solid #e0e0e0;padding-bottom:8px;">
+        <div class="section-title-wrap" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;border-bottom:2px solid #e0e0e0;padding-bottom:8px;flex-wrap:wrap;gap:8px;">
             <h2 class="section-title" style="font-size:22px;font-weight:800;color:var(--dark);padding-right:12px;border-right:4px solid var(--red);">جميع أخبار <%= section %></h2>
-            <span class="section-more" style="font-size:14px;color:var(--red);font-weight:600;">آخر الأخبار</span>
+            <div>
+                <% if (hasOrder) { %>
+                <span class="view-toggle">
+                    <a href="/section?slug=<%= slug %>&view=grid" class="<%= (view!=='timeline')?'active':'' %>"><i class="fas fa-th-large"></i> شبكة</a>
+                    <a href="/section?slug=<%= slug %>&view=timeline" class="<%= (view==='timeline')?'active':'' %>"><i class="fas fa-tree"></i> شجرة</a>
+                </span>
+                <% } %>
+                <span class="section-more" style="font-size:14px;color:var(--red);font-weight:600;">آخر الأخبار</span>
+            </div>
         </div>
 
         <% if (!sectionArticles || sectionArticles.length === 0) { %>
         <div class="no-results" style="text-align:center;padding:60px 20px;color:#999;">
             <i class="far fa-frown" style="font-size:48px;margin-bottom:15px;color:#ddd;display:block;"></i>
             <h4 style="font-size:18px;font-weight:700;color:#666;">لا توجد مقالات في هذا القسم</h4>
+        </div>
+        <% } else if (view === 'timeline' && hasOrder) { %>
+        <!-- Timeline / Tree View -->
+        <div class="timeline-wrap">
+            <% for (var ai = 0; ai < pageArticles.length; ai++) { var a = pageArticles[ai]; %>
+            <div class="timeline-card" data-num="<%= (page-1)*12 + (ai+1) %>">
+                <div class="card-inner">
+                    <a href="/article?id=<%= a.id %>">
+                        <img class="timeline-img" src="<%= a.image || '' %>" alt="<%= a.title %>" onerror="this.src='data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'300\'><rect fill=\'%23f0f0f0\' width=\'400\' height=\'300\'/><text x=\'200\' y=\'155\' text-anchor=\'middle\' fill=\'%23ccc\' font-size=\'18\'>صورة</text></svg>'">
+                        <div class="timeline-body">
+                            <h3><%= a.title %></h3>
+                            <div class="meta"><i class="far fa-calendar-alt"></i> <%= a.date || '' %></div>
+                            <div class="meta" style="margin-top:4px;"><i class="fas fa-user"></i> <%= a.author || 'بوابة الجامعة' %></div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <% } %>
         </div>
         <% } else { %>
         <div class="row g-4">
@@ -48,6 +101,7 @@
             </div>
             <% } %>
         </div>
+        <% } %>
 
         <% if (totalPages > 1) { %>
         <div class="pagination-wrap" style="display:flex;justify-content:center;gap:5px;margin:30px 0 20px;">

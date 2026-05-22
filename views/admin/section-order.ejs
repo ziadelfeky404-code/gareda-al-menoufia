@@ -5,7 +5,8 @@
 .section-picker a:hover{background:#e8f5e9;color:#157039}
 .section-picker a.active{background:#157039;color:#fff}
 .sort-list{list-style:none;padding:0;margin:0}
-.sort-list li{display:flex;align-items:center;gap:10px;padding:10px 14px;background:#fff;border:1px solid #eee;border-radius:6px;margin-bottom:6px;cursor:grab;transition:box-shadow 0.2s}
+.sort-list li{display:flex;align-items:center;gap:10px;padding:8px 12px;background:#fff;border:1px solid #eee;border-radius:8px;margin-bottom:6px;cursor:grab;transition:box-shadow 0.2s}
+.sort-list li .sort-img{width:42px;height:42px;border-radius:4px;object-fit:cover;flex-shrink:0}
 .sort-list li:hover{box-shadow:0 2px 8px rgba(0,0,0,0.06)}
 .sort-list li.dragging{opacity:0.5;background:#e8f5e9}
 .sort-list li .drag-handle{cursor:grab;color:#ccc;font-size:16px}
@@ -41,8 +42,8 @@
 <li data-id="<%= a.id %>">
 <span class="drag-handle"><i class="fas fa-grip-vertical"></i></span>
 <span class="sort-id"><%= a.id %></span>
-<span class="sort-title"><%= a.title.substring(0, 60) %></span>
-<span class="sort-section"><%= a.section %></span>
+<img class="sort-img" src="<%= a.image || '' %>" alt="" onerror="this.style.display='none'">
+<span class="sort-title" style="flex:1;font-size:14px;font-weight:700;color:var(--dark);line-height:1.3"><%= a.title %></span>
 </li>
 <% } %>
 </ul>
@@ -50,8 +51,9 @@
 <div class="empty-state"><i class="far fa-frown" style="font-size:36px;color:#ddd;display:block;margin-bottom:10px"></i> لا توجد مقالات في هذا القسم</div>
 <% } %>
 <input type="hidden" name="article_order" id="articleOrder" value="">
-<div style="margin-top:15px">
+<div style="margin-top:15px;display:flex;gap:10px;flex-wrap:wrap">
 <button type="submit" class="btn btn-primary" style="background:#157039;border:none;padding:10px 30px;font-size:15px;font-weight:800;border-radius:6px"><i class="fas fa-save ms-1"></i> حفظ الترتيب</button>
+<a href="/section?slug=<%= currentSlug %>&view=timeline" class="btn btn-secondary" style="background:#6c3483;color:#fff;padding:10px 20px;font-size:14px;font-weight:700;border-radius:6px;text-decoration:none;display:inline-flex;align-items:center;"><i class="fas fa-eye ms-1"></i> عرض كشجرة</a>
 </div>
 </form>
 <% } %>

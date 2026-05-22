@@ -156,6 +156,26 @@
         });
     });
 })();
+
+// Make article images clickable
+(function(){
+    ['news-card','result-item','hero-side-item','hero-main'].forEach(function(cls){
+        document.querySelectorAll('.'+cls+', .card-img').forEach(function(card){
+            var link = card.querySelector('a[href*="id="]');
+            if (!link) link = card.closest('a[href*="id="]');
+            if (!link) link = card.parentElement ? card.parentElement.querySelector('a[href*="id="]') : null;
+            if (!link) return;
+            var href = link.getAttribute('href');
+            card.querySelectorAll('img').forEach(function(img){
+                img.style.cursor = 'pointer';
+                img.addEventListener('click', function(e){
+                    e.stopPropagation();
+                    window.location.href = href;
+                });
+            });
+        });
+    });
+})();
 </script>
 </body>
 </html>

@@ -354,10 +354,13 @@ app.get('/section', (req, res) => {
   const offset = (page - 1) * perPage;
   const pageArticles = sectionArticles.slice(offset, offset + perPage);
 
+  const view = (req.query.view || '').trim();
+  const hasOrder = orderIds.length > 0;
+
   res.render('section', {
     title: section,
     section, slug, page, totalPages, pageArticles, sectionArticles,
-    slugReverse
+    slugReverse, hasOrder, view
   });
 });
 
