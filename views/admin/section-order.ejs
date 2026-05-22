@@ -1,0 +1,98 @@
+<%- include('../partials/admin-header', { title: title }) %>
+<style>
+.section-picker{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px;padding:15px;background:#fff;border-radius:8px;border:1px solid #eee}
+.section-picker a{padding:6px 16px;border-radius:20px;font-size:13px;font-weight:600;background:#f0f0f0;color:#555;text-decoration:none;transition:all 0.2s}
+.section-picker a:hover{background:#e8f5e9;color:#157039}
+.section-picker a.active{background:#157039;color:#fff}
+.sort-list{list-style:none;padding:0;margin:0}
+.sort-list li{display:flex;align-items:center;gap:10px;padding:10px 14px;background:#fff;border:1px solid #eee;border-radius:6px;margin-bottom:6px;cursor:grab;transition:box-shadow 0.2s}
+.sort-list li:hover{box-shadow:0 2px 8px rgba(0,0,0,0.06)}
+.sort-list li.dragging{opacity:0.5;background:#e8f5e9}
+.sort-list li .drag-handle{cursor:grab;color:#ccc;font-size:16px}
+.sort-list li .sort-id{background:var(--red);color:#fff;padding:1px 8px;border-radius:3px;font-size:11px;font-weight:700;min-width:30px;text-align:center}
+.sort-list li .sort-title{flex:1;font-size:13px;font-weight:600;color:#333}
+.sort-list li .sort-section{font-size:11px;color:#888;font-weight:400}
+.empty-state{text-align:center;padding:40px;color:#999}
+.alert-success{background:#d4edda;color:#155724;padding:12px 18px;border-radius:6px;font-size:14px;font-weight:400;margin-bottom:15px}
+</style>
+<div class="admin-wrap">
+<div class="container-fluid">
+<div class="row">
+<div class="col-12 mb-3">
+<h1 class="admin-title"><i class="fas fa-sort ms-2"></i> ترتيب المقالات في الأقسام</h1>
+</div>
+</div>
+<% if (req.query.saved) { %><div class="alert-success"><i class="fas fa-check-circle ms-1"></i> تم حفظ الترتيب بنجاح</div><% } %>
+<div class="section-picker">
+<a href="/admin/section-order" class="<%= !currentSlug ? 'active' : '' %>">كل الأقسام</a>
+<% for (var i = 0; i < sections.length; i++) { var s = sections[i]; %>
+<a href="/admin/section-order/<%= s.slug %>" class="<%= currentSlug === s.slug ? 'active' : '' %>"><%= s.name %></a>
+<% } %>
+</div>
+<% if (!currentSlug) { %>
+<div class="empty-state"><i class="fas fa-hand-pointer" style="font-size:36px;color:#ddd;display:block;margin-bottom:10px"></i> اختر قسمًا من الأعلى لترتيب المقالات</div>
+<% } else { %>
+<div style="margin-bottom:10px;font-size:14px;color:#555;font-weight:400">
+<i class="fas fa-info-circle ms-1"></i> اسحب وأفلت المقالات لترتيبها. أول المقالات = يظهر أولاً.
+</div>
+<form method="post" action="/admin/section-order/<%= currentSlug %>" id="orderForm">
+<ul class="sort-list" id="sortList">
+<% for (var i = 0; i < articles.length; i++) { var a = articles[i]; %>
+<li data-id="<%= a.id %>">
+<span class="drag-handle"><i class="fas fa-grip-vertical"></i></span>
+<span class="sort-id"><%= a.id %></span>
+<span class="sort-title"><%= a.title.substring(0, 60) %></span>
+<span class="sort-section"><%= a.section %></span>
+</li>
+<% } %>
+</ul>
+<% if (articles.length === 0) { %>
+<div class="empty-state"><i class="far fa-frown" style="font-size:36px;color:#ddd;display:block;margin-bottom:10px"></i> لا توجد مقالات في هذا القسم</div>
+<% } %>
+<input type="hidden" name="article_order" id="articleOrder" value="">
+<div style="margin-top:15px">
+<button type="submit" class="btn btn-primary" style="background:#157039;border:none;padding:10px 30px;font-size:15px;font-weight:800;border-radius:6px"><i class="fas fa-save ms-1"></i> حفظ الترتيب</button>
+</div>
+</form>
+<% } %>
+</div>
+</div>
+<script>
+(function(){
+var list = document.getElementById('sortList');
+if (!list) return;
+var dragItem = null;
+list.querySelectorAll('li').forEach(function(item){
+item.setAttribute('draggable', 'true');
+item.addEventListener('dragstart', function(e){
+dragItem = this;
+this.classList.add('dragging');
+e.dataTransfer.effectAllowed = 'move';
+});
+item.addEventListener('dragend', function(){
+this.classList.remove('dragging');
+dragItem = null;
+});
+item.addEventListener('dragover', function(e){
+e.preventDefault();
+if (dragItem !== this) {
+var rect = this.getBoundingClientRect();
+var mid = rect.top + rect.height / 2;
+if (e.clientY < mid) {
+this.parentNode.insertBefore(dragItem, this);
+} else {
+this.parentNode.insertBefore(dragItem, this.nextSibling);
+}
+}
+});
+});
+document.getElementById('orderForm').addEventListener('submit', function(){
+var ids = [];
+document.querySelectorAll('#sortList li').forEach(function(li){
+ids.push(li.getAttribute('data-id'));
+});
+document.getElementById('articleOrder').value = ids.join(',');
+});
+})();
+</script>
+<%- include('../partials/admin-footer') %>

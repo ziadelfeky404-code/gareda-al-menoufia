@@ -332,7 +332,21 @@ app.get('/section', (req, res) => {
     return res.status(404).render('404-section', { slug });
   }
 
-  let sectionArticles = getArticlesBySection(section).reverse();
+  let sectionArticles = getArticlesBySection(section);
+  const orders = getSetting('section_orders', {});
+  const orderIds = orders[section] || [];
+  if (orderIds.length > 0) {
+    const ordered = [];
+    const unordered = [];
+    for (const a of sectionArticles) {
+      const idx = orderIds.indexOf(a.id);
+      if (idx !== -1) ordered[idx] = a;
+      else unordered.push(a);
+    }
+    sectionArticles = ordered.filter(Boolean).concat(unordered.sort((a, b) => (b.id || 0) - (a.id || 0)));
+  } else {
+    sectionArticles = sectionArticles.reverse();
+  }
   const page = Math.max(1, parseInt(req.query.page) || 1);
   const perPage = 12;
   const total = sectionArticles.length;
@@ -904,6 +918,116 @@ app.post('/admin/settings', requireAdmin, (req, res) => {
     message: 'تم حفظ الإعدادات بنجاح', error: '',
     admin: req.session.admin
   });
+});
+
+// --- HOMEPAGE MANAGER ---
+app.get('/admin/homepage', requireAdmin, (req, res) => {
+  const settings = loadSettings();
+  const articles = loadArticles();
+  const tickerIds = settings.ticker_news_ids || [];
+  const heroSlidePins = settings.hero_slide_pins || [];
+  const heroPins = settings.hero_pins || [];
+  const mostReadIds = settings.most_read_ids || [1, 2, 5, 7];
+  const sections = getSections();
+  const tickerArticles = tickerIds.map(id => getArticle(id)).filter(Boolean);
+  const heroSlideArticles = heroSlidePins.map(id => getArticle(id)).filter(Boolean);
+  const heroSideArticles = heroPins.map(id => getArticle(id)).filter(Boolean);
+  const mostReadArticles = mostReadIds.map(id => getArticle(id)).filter(Boolean);
+  res.render('admin/homepage', {
+    title: 'إدارة الصفحة الرئيسية',
+    tickerIds: tickerIds.join(', '),
+    heroSlidePins: heroSlidePins.join(', '),
+    heroPins: heroPins.join(', '),
+    mostReadIds: mostReadIds.join(', '),
+    tickerArticles, heroSlideArticles, heroSideArticles, mostReadArticles,
+    articles, sections,
+    message: '', error: '',
+    admin: req.session.admin
+  });
+});
+
+app.post('/admin/homepage', requireAdmin, (req, res) => {
+  const settings = loadSettings();
+  const articles = loadArticles();
+  const sections = getSections();
+  const parseIds = (str) => (str || '').split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n) && n > 0);
+  settings.ticker_news_ids = parseIds(req.body.ticker_ids);
+  settings.hero_slide_pins = parseIds(req.body.hero_slide_ids);
+  settings.hero_pins = parseIds(req.body.hero_side_ids);
+  settings.most_read_ids = parseIds(req.body.most_read_ids);
+  saveSettings(settings);
+  const tickerIds = settings.ticker_news_ids || [];
+  const heroSlidePins = settings.hero_slide_pins || [];
+  const heroPins = settings.hero_pins || [];
+  const mostReadIds = settings.most_read_ids || [1, 2, 5, 7];
+  const tickerArticles = tickerIds.map(id => getArticle(id)).filter(Boolean);
+  const heroSlideArticles = heroSlidePins.map(id => getArticle(id)).filter(Boolean);
+  const heroSideArticles = heroPins.map(id => getArticle(id)).filter(Boolean);
+  const mostReadArticles = mostReadIds.map(id => getArticle(id)).filter(Boolean);
+  res.render('admin/homepage', {
+    title: 'إدارة الصفحة الرئيسية',
+    tickerIds: tickerIds.join(', '),
+    heroSlidePins: heroSlidePins.join(', '),
+    heroPins: heroPins.join(', '),
+    mostReadIds: mostReadIds.join(', '),
+    tickerArticles, heroSlideArticles, heroSideArticles, mostReadArticles,
+    articles, sections,
+    message: 'تم حفظ إعدادات الصفحة الرئيسية بنجاح', error: '',
+    admin: req.session.admin
+  });
+});
+
+// --- SECTION ORDER MANAGER ---
+app.get('/admin/section-order', requireAdmin, (req, res) => {
+  const sections = getSections();
+  res.render('admin/section-order', {
+    title: 'ترتيب الأقسام',
+    sections,
+    message: '', error: '',
+    admin: req.session.admin
+  });
+});
+
+app.get('/admin/section-order/:slug', requireAdmin, (req, res) => {
+  const slug = req.params.slug;
+  const sections = getSections();
+  const slugMap = {};
+  for (const s of sections) { slugMap[s.slug] = s.name; }
+  const sectionName = slugMap[slug];
+  if (!sectionName) return res.redirect('/admin/section-order');
+  const allArticles = getArticlesBySection(sectionName);
+  const orders = loadSettings().section_orders || {};
+  const orderIds = orders[sectionName] || [];
+  const ordered = [];
+  const unordered = [];
+  for (const a of allArticles) {
+    const idx = orderIds.indexOf(a.id);
+    if (idx !== -1) ordered[idx] = a;
+    else unordered.push(a);
+  }
+  const finalList = ordered.filter(Boolean).concat(unordered.sort((a, b) => (b.id || 0) - (a.id || 0)));
+  res.render('admin/section-order', {
+    title: 'ترتيب: ' + sectionName,
+    sections, currentSlug: slug, sectionName,
+    articles: finalList,
+    message: '', error: '',
+    admin: req.session.admin
+  });
+});
+
+app.post('/admin/section-order/:slug', requireAdmin, (req, res) => {
+  const slug = req.params.slug;
+  const sections = getSections();
+  const slugMap = {};
+  for (const s of sections) { slugMap[s.slug] = s.name; }
+  const sectionName = slugMap[slug];
+  if (!sectionName) return res.redirect('/admin/section-order');
+  const ids = (req.body.article_order || '').split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n) && n > 0);
+  const settings = loadSettings();
+  if (!settings.section_orders) settings.section_orders = {};
+  settings.section_orders[sectionName] = ids;
+  saveSettings(settings);
+  res.redirect('/admin/section-order/' + slug + '?saved=1');
 });
 
 // --- MESSAGES ---

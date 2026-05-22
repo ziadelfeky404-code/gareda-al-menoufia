@@ -1,0 +1,123 @@
+<%- include('../partials/admin-header', { title: title }) %>
+<style>
+.homepage-section{border:1px solid #e0e0e0;border-radius:8px;margin-bottom:20px;background:#fff}
+.homepage-section .section-header{background:#f8f9fa;padding:12px 18px;border-bottom:1px solid #e0e0e0;font-size:15px;font-weight:800;color:var(--dark);border-radius:8px 8px 0 0}
+.homepage-section .section-body{padding:15px 18px}
+.position-row{display:flex;gap:8px;align-items:center;margin-bottom:8px;padding:6px 10px;background:#fafafa;border-radius:4px}
+.position-row .pos-label{font-size:12px;font-weight:700;color:#666;min-width:80px}
+.position-row input{flex:1;padding:5px 10px;border:2px solid #ddd;border-radius:4px;font-size:13px;font-family:'Cairo',sans-serif;max-width:120px}
+.position-row input:focus{outline:none;border-color:#157039}
+.position-row .art-preview{font-size:12px;color:#333;font-weight:400;flex:2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.article-search-wrap{position:relative;margin-bottom:15px}
+.article-search-wrap input{width:100%;padding:8px 12px;border:2px solid #ddd;border-radius:6px;font-size:14px;font-family:'Cairo',sans-serif}
+.article-search-wrap input:focus{outline:none;border-color:#157039}
+.search-results{position:absolute;top:100%;left:0;right:0;background:#fff;border:1px solid #ddd;border-radius:0 0 6px 6px;max-height:200px;overflow-y:auto;z-index:100;display:none}
+.search-results div{padding:6px 12px;cursor:pointer;font-size:12px;border-bottom:1px solid #eee}
+.search-results div:hover{background:#e8f5e9}
+.btn-sm-remove{background:#e74c3c;color:#fff;border:none;padding:3px 10px;border-radius:4px;font-size:11px;cursor:pointer}
+.btn-sm-add{background:#157039;color:#fff;border:none;padding:5px 14px;border-radius:4px;font-size:12px;cursor:pointer}
+.info-badge{display:inline-block;background:#e8f5e9;color:#2e7d32;font-size:11px;padding:2px 8px;border-radius:3px;margin-right:5px}
+</style>
+<div class="admin-wrap">
+<div class="container-fluid">
+<div class="row">
+<div class="col-12 mb-3 d-flex justify-content-between align-items-center">
+<h1 class="admin-title mb-0"><i class="fas fa-home ms-2"></i> إدارة الصفحة الرئيسية</h1>
+<a href="/admin/dashboard" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-right"></i> عودة</a>
+</div>
+</div>
+<% if (message) { %><div class="alert alert-success"><i class="fas fa-check-circle"></i> <%= message %></div><% } %>
+<% if (error) { %><div class="alert alert-danger"><i class="fas fa-exclamation-circle"></i> <%= error %></div><% } %>
+<div class="article-search-wrap">
+<input type="text" id="articleSearch" placeholder="🔍 بحث عن مقال بالعنوان أو الرقم..." onkeyup="searchArticles(this.value)">
+<div class="search-results" id="searchResults"></div>
+</div>
+<form method="post" action="/admin/homepage">
+<div class="homepage-section">
+<div class="section-header"><i class="fas fa-sync ms-1"></i> الشريط المتحرك (Ticker)</div>
+<div class="section-body">
+<p style="font-size:12px;color:#888;font-weight:400;margin-bottom:8px">أرقام المقالات مفصولة بفواصل — بترتيب الظهور</p>
+<div class="position-row">
+<input type="text" name="ticker_ids" value="<%= tickerIds %>" style="max-width:100%;flex:1" placeholder="مثال: 1, 2, 5, 8, 17">
+</div>
+<div style="font-size:11px;color:#666;font-weight:400">
+<% for (var i = 0; i < tickerArticles.length; i++) { var ta = tickerArticles[i]; %>
+<span class="info-badge">#<%= ta.id %> <%= ta.title.substring(0, 40) %></span>
+<% } %>
+</div>
+</div>
+</div>
+<div class="homepage-section">
+<div class="section-header"><i class="fas fa-images ms-1"></i> السلايدر الرئيسي (Hero Slides) — 7 مواضع</div>
+<div class="section-body">
+<p style="font-size:12px;color:#888;font-weight:400;margin-bottom:8px">أرقام المقالات — أول 7 أرقام هي اللي بتظهر</p>
+<div class="position-row">
+<input type="text" name="hero_slide_ids" value="<%= heroSlidePins %>" style="max-width:100%;flex:1" placeholder="مثال: 24, 7, 2, 3, 4, 22, 23">
+</div>
+<div style="font-size:11px;color:#666;font-weight:400">
+<% for (var i = 0; i < heroSlideArticles.length; i++) { var ha = heroSlideArticles[i]; %>
+<span class="info-badge">#<%= ha.id %> <%= ha.title.substring(0, 40) %></span>
+<% } %>
+</div>
+</div>
+</div>
+<div class="homepage-section">
+<div class="section-header"><i class="fas fa-columns ms-1"></i> الأعمدة الجانبية (Hero Sides) — 4 مواضع</div>
+<div class="section-body">
+<p style="font-size:12px;color:#888;font-weight:400;margin-bottom:8px">أرقام المقالات — أول 4 أرقام</p>
+<div class="position-row">
+<input type="text" name="hero_side_ids" value="<%= heroPins %>" style="max-width:100%;flex:1" placeholder="مثال: 1, 5, 6, 24">
+</div>
+<div style="font-size:11px;color:#666;font-weight:400">
+<% for (var i = 0; i < heroSideArticles.length; i++) { var hsa = heroSideArticles[i]; %>
+<span class="info-badge">#<%= hsa.id %> <%= hsa.title.substring(0, 40) %></span>
+<% } %>
+</div>
+</div>
+</div>
+<div class="homepage-section">
+<div class="section-header"><i class="fas fa-star ms-1"></i> الأكثر قراءة (Most Read) — 4 مواضع</div>
+<div class="section-body">
+<div class="position-row">
+<input type="text" name="most_read_ids" value="<%= mostReadIds %>" style="max-width:100%;flex:1" placeholder="مثال: 1, 2, 5, 7">
+</div>
+<div style="font-size:11px;color:#666;font-weight:400">
+<% for (var i = 0; i < mostReadArticles.length; i++) { var mra = mostReadArticles[i]; %>
+<span class="info-badge">#<%= mra.id %> <%= mra.title.substring(0, 40) %></span>
+<% } %>
+</div>
+</div>
+</div>
+<button type="submit" class="btn btn-primary" style="background:#157039;border:none;padding:12px 40px;font-size:16px;font-weight:800;border-radius:6px"><i class="fas fa-save ms-1"></i> حفظ الإعدادات</button>
+</form>
+</div>
+</div>
+<script>
+var allArticles = <%- JSON.stringify(articles.map(function(a){ return { id: a.id, title: a.title, section: a.section }; })) %>;
+function searchArticles(q) {
+var el = document.getElementById('searchResults');
+if (!q || q.length < 1) { el.style.display = 'none'; return; }
+var results = allArticles.filter(function(a){
+return a.title.indexOf(q) !== -1 || String(a.id).indexOf(q) !== -1;
+}).slice(0, 10);
+el.innerHTML = results.map(function(a){ return '<div onclick="selectArticle(' + a.id + ',\'' + a.title.replace(/'/g,"\\'") + '\')">#' + a.id + ' — ' + a.title.substring(0,50) + ' <span style="color:#888;font-size:10px">[' + a.section + ']</span></div>'; }).join('');
+el.style.display = results.length ? 'block' : 'none';
+}
+function selectArticle(id, title) {
+var input = document.querySelector('input[name="ticker_ids"]');
+if (input) {
+var current = input.value ? input.value.split(',').map(function(s){return s.trim()}).filter(Boolean) : [];
+if (current.indexOf(String(id)) === -1) {
+current.push(String(id));
+input.value = current.join(', ');
+}
+}
+document.getElementById('searchResults').style.display = 'none';
+document.getElementById('articleSearch').value = '';
+}
+document.addEventListener('click', function(e){
+var el = document.getElementById('searchResults');
+if (el && !e.target.closest('.article-search-wrap')) el.style.display = 'none';
+});
+</script>
+<%- include('../partials/admin-footer') %>
