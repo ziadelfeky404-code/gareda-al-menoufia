@@ -670,9 +670,10 @@ app.get('/admin/articles', requireAdmin, (req, res) => {
 
 // --- ARTICLE ADD ---
 app.get('/admin/article-add', requireAdmin, (req, res) => {
+  const message = req.query.added ? 'تم إضافة المقال بنجاح' : '';
   res.render('admin/article-add', {
     title: 'إضافة مقال',
-    message: '', error: '',
+    message, error: '',
     sections: ALL_SECTIONS,
     admin: req.session.admin, body: {}
   });
@@ -686,7 +687,7 @@ app.post('/admin/article-add', requireAdmin, upload.fields([
   const sections = ALL_SECTIONS;
   const sectionFileMap = SECTION_FILE_MAP;
 
-  let { title, section, image, cover_image, image_desc, date, author, tags, paragraphs, gallery_urls, gallery_descs } = req.body;
+  let { title, section, image, cover_image, image_desc, date, author, tags, paragraphs, content, gallery_urls, gallery_descs } = req.body;
   title = (title || '').trim();
   let error = '';
 
@@ -702,7 +703,7 @@ app.post('/admin/article-add', requireAdmin, upload.fields([
     }
 
     let tagsArray = (tags || '').split(',').map(t => t.trim()).filter(t => t);
-    let paragraphsArray = (paragraphs || '').split('\n').map(p => p.trim()).filter(p => p);
+    let paragraphsArray = (paragraphs || content || '').split('\n').map(p => p.trim()).filter(p => p);
 
     let gallery = [];
     if (gallery_urls) {
@@ -739,11 +740,7 @@ app.post('/admin/article-add', requireAdmin, upload.fields([
 
     articles.push(article);
     saveArticles(articles);
-    return res.render('admin/article-add', {
-      title: 'إضافة مقال',
-      message: 'تم إضافة المقال بنجاح', error: '',
-      sections, admin: req.session.admin, body: {}
-    });
+    return res.redirect('/admin/article-add?added=1');
   }
 
   res.render('admin/article-add', {
@@ -761,10 +758,11 @@ app.get('/admin/article-edit/:id', requireAdmin, (req, res) => {
 
   const sections = ALL_SECTIONS;
 
+  const message = req.query.saved ? 'تم تحديث المقال بنجاح' : '';
   res.render('admin/article-edit', {
     title: 'تعديل مقال',
     article, id, sections,
-    message: '', error: '',
+    message, error: '',
     admin: req.session.admin
   });
 });
@@ -781,7 +779,7 @@ app.post('/admin/article-edit/:id', requireAdmin, upload.fields([
   const sections = ALL_SECTIONS;
   const sectionFileMap = SECTION_FILE_MAP;
 
-  let { title, section, image, cover_image, image_desc, date, author, tags, paragraphs, gallery_urls, gallery_descs } = req.body;
+  let { title, section, image, cover_image, image_desc, date, author, tags, paragraphs, content, gallery_urls, gallery_descs } = req.body;
   title = (title || '').trim();
   let error = '';
 
@@ -790,7 +788,7 @@ app.post('/admin/article-edit/:id', requireAdmin, upload.fields([
 
   if (!error) {
     let tagsArray = (tags || '').split(',').map(t => t.trim()).filter(t => t);
-    let paragraphsArray = (paragraphs || '').split('\n').map(p => p.trim()).filter(p => p);
+    let paragraphsArray = (paragraphs || content || '').split('\n').map(p => p.trim()).filter(p => p);
 
     let gallery = [];
     if (gallery_urls) {
@@ -831,13 +829,7 @@ app.post('/admin/article-edit/:id', requireAdmin, upload.fields([
       }
     }
     saveArticles(allArticles);
-    article = getArticle(id);
-    return res.render('admin/article-edit', {
-      title: 'تعديل مقال',
-      article, id, sections,
-      message: 'تم تحديث المقال بنجاح', error: '',
-      admin: req.session.admin
-    });
+    return res.redirect('/admin/article-edit/' + id + '?saved=1');
   }
 
   res.render('admin/article-edit', {

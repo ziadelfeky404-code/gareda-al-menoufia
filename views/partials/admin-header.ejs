@@ -65,10 +65,34 @@ body{font-family:var(--fonts);font-size:14px;text-align:right;background:#f4f6f9
 .date-badge{background:#e8f5e9;color:#2e7d32;font-size:11px;padding:2px 8px;border-radius:3px}
 .empty-state-admin{text-align:center;padding:40px 20px;color:#999;font-size:14px;font-weight:400}
 .empty-state-admin i{font-size:40px;color:#ddd;display:block;margin-bottom:10px}
+@media(max-width:991px){
+.admin-topbar .admin-brand{font-size:15px}
+.admin-topbar a{font-size:11px!important;padding:3px 4px!important;margin:0 2px!important}
+}
 @media(max-width:767px){
-.admin-title{font-size:20px}
-.admin-quick-bar{overflow-x:auto;flex-wrap:nowrap;justify-content:flex-start}
-.admin-quick-bar a{font-size:11px;padding:4px 8px}
+.admin-title{font-size:18px!important}
+.admin-quick-bar{overflow-x:auto;flex-wrap:nowrap;justify-content:flex-start;padding:6px 10px}
+.admin-quick-bar a{font-size:10px!important;padding:3px 6px!important;white-space:nowrap}
+.stat-card{padding:12px}
+.stat-card .stat-icon{width:36px;height:36px;font-size:16px}
+.stat-card .stat-body h3{font-size:18px}
+.admin-table{font-size:11px}
+.admin-table th,.admin-table td{padding:6px 8px!important}
+.admin-table td a{font-size:11px!important}
+.admin-topbar .container-fluid>div:last-child{overflow-x:auto;display:flex;flex-wrap:nowrap;width:100%;padding-bottom:4px}
+.admin-topbar a{font-size:10px!important;padding:2px 6px!important}
+.row.g-4 .col-lg-4{margin-top:0}
+.homepage-section .section-body{padding:10px!important}
+.position-row{flex-wrap:wrap;gap:4px}
+.position-row input{font-size:12px!important;min-width:60px!important}
+}
+@media(max-width:480px){
+.admin-title{font-size:16px!important}
+.stat-card .stat-body h3{font-size:16px}
+.stat-card .stat-body p{font-size:10px}
+.admin-table{font-size:10px}
+.admin-table th,.admin-table td{padding:4px 5px!important}
+.admin-table td img{width:30px!important;height:25px!important}
 }
 </style>
 </head>
