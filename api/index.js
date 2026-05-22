@@ -901,7 +901,7 @@ app.post('/admin/sections', requireAdmin, (req, res) => {
         if (!slug) slug = 'sec_' + crypto.randomBytes(3).toString('hex');
         sectionsData.push({ name, slug, file: req.body.file || '' });
         saveSections(sectionsData);
-        message = 'تم إضافة القسم "' + name + '" بنجاح';
+        return res.redirect('/admin/sections?added=1');
       }
     }
   }
