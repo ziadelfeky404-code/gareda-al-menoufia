@@ -26,7 +26,7 @@
 <h4>لا توجد رسائل حتى الآن</h4>
 </div>
 <% } else { for (var mi = msgs.length - 1; mi >= 0; mi--) { var m = msgs[mi]; %>
-<div class="message-card">
+<div class="message-card" style="<%= m.read ? 'opacity:0.6' : 'border-right:4px solid #157039' %>">
 <div class="msg-header">
 <h4><i class="fas fa-user ms-1"></i> <%= m.name || 'غير معروف' %></h4>
 <span class="msg-date"><i class="far fa-clock ms-1"></i> <%= m.date || '' %></span>
@@ -35,6 +35,12 @@
 <i class="fas fa-envelope ms-1"></i> <a href="mailto:<%= m.email %>"><%= m.email %></a>
 </div>
 <div class="msg-body"><%= m.message %></div>
+<div class="msg-actions">
+<% if (!m.read) { %>
+<a href="/admin/messages?mark=<%= m.id %>" class="btn btn-sm btn-outline-success"><i class="fas fa-check ms-1"></i> تحديد كمقروء</a>
+<% } %>
+<a href="/admin/messages?delete=<%= m.id %>" class="btn btn-sm btn-outline-danger" onclick="return confirm('حذف هذه الرسالة؟')"><i class="fas fa-trash ms-1"></i> حذف</a>
+</div>
 </div>
 <% } } %>
 </div>
