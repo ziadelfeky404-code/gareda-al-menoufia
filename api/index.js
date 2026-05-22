@@ -863,19 +863,13 @@ app.all('/admin/article-delete/:id', requireAdmin, (req, res) => {
 app.get('/admin/sections', requireAdmin, (req, res) => {
   const sectionsData = getSections();
 
-  if (req.query.delete !== undefined) {
-    const delIdx = parseInt(req.query.delete);
-    if (delIdx >= 0 && delIdx < sectionsData.length) {
-      sectionsData.splice(delIdx, 1);
-      saveSections(sectionsData);
-    }
-    return res.redirect('/admin/sections');
-  }
+  const deleted = req.query.deleted === '1' ? 'تم حذف القسم بنجاح' : '';
+  const added = req.query.added === '1' ? 'تم إضافة القسم بنجاح' : '';
 
   res.render('admin/sections', {
     title: 'الأقسام',
     sectionsData,
-    message: '', error: '',
+    message: deleted || added || '', error: '',
     admin: req.session.admin
   });
 });
@@ -883,6 +877,16 @@ app.get('/admin/sections', requireAdmin, (req, res) => {
 app.post('/admin/sections', requireAdmin, (req, res) => {
   const sectionsData = getSections();
   let message = '', error = '';
+
+  if (req.body.delete_slug) {
+    const slug = req.body.delete_slug;
+    const idx = sectionsData.findIndex(s => s.slug === slug);
+    if (idx !== -1) {
+      sectionsData.splice(idx, 1);
+      saveSections(sectionsData);
+      return res.redirect('/admin/sections?deleted=1');
+    }
+  }
 
   if (req.body.add_section) {
     const name = (req.body.name || '').trim();
