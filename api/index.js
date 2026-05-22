@@ -147,10 +147,11 @@ function parseArticleDate(dateStr) {
 }
 
 // --- Multer setup for file uploads ---
+const UPLOADS_DIR = process.env.VERCEL ? '/tmp/uploads' : UPLOADS_PATH;
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    if (!fs.existsSync(UPLOADS_PATH)) fs.mkdirSync(UPLOADS_PATH, { recursive: true });
-    cb(null, UPLOADS_PATH);
+    if (!fs.existsSync(UPLOADS_DIR)) fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+    cb(null, UPLOADS_DIR);
   },
   filename: (req, file, cb) => {
     const ext = path.extname(file.originalname);
@@ -179,6 +180,7 @@ app.use(session({
 
 // Static files
 app.use('/uploads', express.static(UPLOADS_PATH));
+if (process.env.VERCEL) app.use('/uploads', express.static('/tmp/uploads'));
 app.use(express.static(path.join(ROOT, 'public')));
 
 // --- Admin auth middleware ---
@@ -734,7 +736,11 @@ app.get('/admin/article-edit/:id', requireAdmin, (req, res) => {
   });
 });
 
-app.post('/admin/article-edit/:id', requireAdmin, (req, res) => {
+app.post('/admin/article-edit/:id', requireAdmin, upload.fields([
+  { name: 'image_file', maxCount: 1 },
+  { name: 'cover_image_file', maxCount: 1 },
+  { name: 'gallery_files', maxCount: 20 }
+]), (req, res) => {
   const id = parseInt(req.params.id) || 0;
   let article = getArticle(id);
   if (!article) return res.redirect('/admin/articles');
@@ -768,6 +774,17 @@ app.post('/admin/article-edit/:id', requireAdmin, (req, res) => {
       for (let i = 0; i < urls.length; i++) {
         const u = urls[i].trim();
         if (u) gallery.push({ url: u, desc: (descs[i] || '').trim() });
+      }
+    }
+    if (req.files && req.files.image_file && req.files.image_file[0]) {
+      image = 'uploads/' + req.files.image_file[0].filename;
+    }
+    if (req.files && req.files.cover_image_file && req.files.cover_image_file[0]) {
+      cover_image = 'uploads/' + req.files.cover_image_file[0].filename;
+    }
+    if (req.files && req.files.gallery_files) {
+      for (const f of req.files.gallery_files) {
+        gallery.push({ url: 'uploads/' + f.filename, desc: '' });
       }
     }
 
@@ -1114,7 +1131,9 @@ app.get('/admin/quick-add', requireAdmin, (req, res) => {
   });
 });
 
-app.post('/admin/quick-add', requireAdmin, (req, res) => {
+app.post('/admin/quick-add', requireAdmin, upload.fields([
+  { name: 'image_file', maxCount: 1 }
+]), (req, res) => {
   const sections = ['أخبار المنوفية', 'منشآت الجامعة', 'ندوات ومؤتمرات',
     'تكريم ومسابقات', 'الفن والمسابقات',
     'رياضة ومسابقات', 'قيادات جامعية', 'تقارير'];
@@ -1146,6 +1165,9 @@ app.post('/admin/quick-add', requireAdmin, (req, res) => {
         const u = urls[i].trim();
         if (u) gallery.push({ url: u, desc: (descs[i] || '').trim() });
       }
+    }
+    if (req.files && req.files.image_file && req.files.image_file[0]) {
+      image = 'uploads/' + req.files.image_file[0].filename;
     }
 
     const articles = loadArticles();

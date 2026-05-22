@@ -52,14 +52,20 @@
 <div class="col-md-6">
 <div class="form-group">
 <label>الصورة الرئيسية</label>
-<input type="text" name="image" class="form-control" placeholder="رابط URL الصورة" value="<%= body.image || '' %>">
-<div class="form-help">رابط مباشر للصورة (يفضل imgBB)</div>
+<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+<input type="text" name="image" class="form-control" placeholder="رابط URL الصورة" value="<%= body.image || '' %>" style="flex:1;min-width:150px">
+<label style="background:#6c3483;color:#fff;padding:8px 14px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap"><i class="fas fa-upload ms-1"></i> رفع صورة<input type="file" name="image_file" accept="image/*" style="display:none" onchange="this.previousElementSibling.previousElementSibling ? null : null; var p=this.parentElement.parentElement.querySelector('input[type=text]'); if(p && this.files.length) p.value=this.files[0].name"></label>
+</div>
+<div class="form-help">أدخل رابط URL مباشر أو اختر ملف من جهازك</div>
 </div>
 </div>
 <div class="col-md-6">
 <div class="form-group">
 <label>صورة الغلاف (اختياري)</label>
-<input type="text" name="cover_image" class="form-control" placeholder="رابط URL" value="<%= body.cover_image || '' %>">
+<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+<input type="text" name="cover_image" class="form-control" placeholder="رابط URL" value="<%= body.cover_image || '' %>" style="flex:1;min-width:150px">
+<label style="background:#6c3483;color:#fff;padding:8px 14px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap"><i class="fas fa-upload ms-1"></i> رفع صورة<input type="file" name="cover_image_file" accept="image/*" style="display:none"></label>
+</div>
 </div>
 </div>
 </div>
@@ -78,11 +84,13 @@
 </div>
 <div class="images-section" id="imagesSection">
 <label style="display:block;font-size:14px;font-weight:700;color:#333;margin-bottom:10px"><i class="fas fa-images ms-1"></i> معرض الصور</label>
+<div style="margin-bottom:10px;font-size:13px;color:#888"><i class="fas fa-info-circle ms-1"></i> يمكن إضافة صور متعددة دفعة واحدة من جهازك</div>
 <div class="image-row">
-<input type="text" name="gallery_url[]" class="form-control" placeholder="رابط الصورة">
-<input type="text" name="gallery_desc[]" class="form-control" placeholder="وصف الصورة (اختياري)">
+<input type="text" name="gallery_url[]" class="form-control" placeholder="رابط URL الصورة" style="flex:2">
+<input type="text" name="gallery_desc[]" class="form-control" placeholder="وصف الصورة (اختياري)" style="flex:1">
 </div>
-<button type="button" class="btn-add-image mt-2" onclick="addGalleryRow()"><i class="fas fa-plus"></i> إضافة صورة أخرى</button>
+<label class="btn btn-secondary btn-sm" style="background:#6c3483;color:#fff;border:none;padding:7px 16px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:5px;margin-top:8px"><i class="fas fa-images"></i> رفع صور متعددة<input type="file" name="gallery_files" accept="image/*" multiple style="display:none"></label>
+<button type="button" class="btn-add-image mt-2" onclick="addGalleryRow()" style="margin-right:5px"><i class="fas fa-plus"></i> إضافة رابط آخر</button>
 </div>
 <button type="submit" class="btn btn-primary" style="background:#157039;border:none;padding:12px 30px;font-size:16px;font-weight:800;border-radius:6px"><i class="fas fa-save ms-1"></i> حفظ المقال</button>
 </form>
