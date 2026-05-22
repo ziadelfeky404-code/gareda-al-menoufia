@@ -325,6 +325,108 @@
     </div>
 </section>
 
+<!-- ===== رياضة ومسابقات ===== -->
+<section class="py-4" id="section-ryada">
+    <div class="container">
+        <div class="section-title-wrap" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:15px;border-bottom:2px solid #e0e0e0;padding-bottom:8px;">
+            <h2 class="section-title" style="font-size:22px;font-weight:800;color:var(--dark);padding-right:12px;border-right:4px solid var(--red);">
+                <a href="/section?slug=ryada" style="color:var(--dark);">رياضة ومسابقات</a>
+                <% if (isAdmin) { %><a href="/admin/quick-add?section=<%= encodeURIComponent('رياضة ومسابقات') %>" class="btn-add-article" style="display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;background:#157039;color:#fff;border-radius:50%;font-size:15px;margin-right:8px;text-decoration:none;vertical-align:middle;"><i class="fas fa-plus"></i></a><% } %>
+            </h2>
+            <a href="/section?slug=ryada" class="section-more" style="font-size:14px;color:var(--red);font-weight:600;">المزيد <i class="fas fa-arrow-left me-1"></i></a>
+        </div>
+        <div class="row">
+            <% for (var col = 0; col < 3; col++) { var cardIdx = col * 2; var listIdx = col * 2 + 1; var cardArt = ryadaArts[cardIdx]; var listArt = ryadaArts[listIdx]; %>
+            <div class="col-md-4">
+                <% if (cardArt) { %>
+                <div class="news-card" style="margin-bottom:20px;">
+                    <div class="card-img" style="position:relative;overflow:hidden;">
+                        <span class="card-badge" style="position:absolute;top:10px;right:10px;background:var(--red);color:var(--white);font-size:12px;font-weight:600;padding:3px 10px;"><%= (cardArt.tags && cardArt.tags[0]) || '' %></span>
+                        <img src="<%= cardArt.image || '' %>" alt="<%= cardArt.title || '' %>" style="width:100%;height:180px;object-fit:cover;"></div>
+                    <div class="card-body" style="padding:10px 0;">
+                        <h3 style="font-size:16px;font-weight:800;line-height:1.4;margin-bottom:5px;"><a href="/article?id=<%= cardArt.id %>" style="color:var(--dark);"><%= cardArt.title %></a></h3></div>
+                </div>
+                <% } %>
+                <% if (listArt) { %>
+                <div class="list-news-item" style="display:flex;gap:12px;margin-bottom:15px;padding-bottom:15px;border-bottom:1px solid #eee;">
+                    <img src="<%= listArt.image || '' %>" alt="<%= listArt.title || '' %>" style="width:120px;height:80px;object-fit:cover;flex-shrink:0;">
+                    <div><h4 style="font-size:14px;font-weight:700;line-height:1.4;margin:0;"><a href="/article?id=<%= listArt.id %>" style="color:var(--dark);"><%= listArt.title %></a></h4></div>
+                </div>
+                <% } %>
+            </div>
+            <% } %>
+        </div>
+    </div>
+</section>
+
+<!-- ===== قيادات جامعية ===== -->
+<section class="py-4" id="section-qiyadat">
+    <div class="container">
+        <div class="section-title-wrap">
+            <h2 class="section-title" style="font-size:22px;font-weight:800;color:var(--dark);padding-right:12px;border-right:4px solid var(--red);">
+                <a href="/section?slug=qiyadat" style="color:var(--dark);">قيادات جامعية</a>
+                <% if (isAdmin) { %><a href="/admin/quick-add?section=<%= encodeURIComponent('قيادات جامعية') %>" class="btn-add-article" style="display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;background:#157039;color:#fff;border-radius:50%;font-size:15px;margin-right:8px;text-decoration:none;vertical-align:middle;"><i class="fas fa-plus"></i></a><% } %>
+            </h2>
+            <a href="/section?slug=qiyadat" class="section-more" style="font-size:14px;color:var(--red);font-weight:600;">المزيد <i class="fas fa-arrow-left me-1"></i></a>
+        </div>
+        <div class="row">
+            <% for (var col = 0; col < 3; col++) { var cardIdx = col * 2; var listIdx = col * 2 + 1; var cardArt = qiyadatArts[cardIdx]; var listArt = qiyadatArts[listIdx]; %>
+            <div class="col-md-4">
+                <% if (cardArt) { %>
+                <div class="news-card" style="margin-bottom:20px;">
+                    <div class="card-img" style="position:relative;overflow:hidden;">
+                        <span class="card-badge" style="position:absolute;top:10px;right:10px;background:var(--red);color:var(--white);font-size:12px;font-weight:600;padding:3px 10px;"><%= (cardArt.tags && cardArt.tags[0]) || '' %></span>
+                        <img src="<%= cardArt.image || '' %>" alt="<%= cardArt.title || '' %>" style="width:100%;height:180px;object-fit:cover;"></div>
+                    <div class="card-body" style="padding:10px 0;">
+                        <h3 style="font-size:16px;font-weight:800;line-height:1.4;margin-bottom:5px;"><a href="/article?id=<%= cardArt.id %>" style="color:var(--dark);"><%= cardArt.title %></a></h3></div>
+                </div>
+                <% } %>
+                <% if (listArt) { %>
+                <div class="list-news-item" style="display:flex;gap:12px;margin-bottom:15px;padding-bottom:15px;border-bottom:1px solid #eee;">
+                    <img src="<%= listArt.image || '' %>" alt="<%= listArt.title || '' %>" style="width:120px;height:80px;object-fit:cover;flex-shrink:0;">
+                    <div><h4 style="font-size:14px;font-weight:700;line-height:1.4;margin:0;"><a href="/article?id=<%= listArt.id %>" style="color:var(--dark);"><%= listArt.title %></a></h4></div>
+                </div>
+                <% } %>
+            </div>
+            <% } %>
+        </div>
+    </div>
+</section>
+
+<!-- ===== تقارير ===== -->
+<section class="py-4" id="section-takarer">
+    <div class="container">
+        <div class="section-title-wrap">
+            <h2 class="section-title" style="font-size:22px;font-weight:800;color:var(--dark);padding-right:12px;border-right:4px solid var(--red);">
+                <a href="/section?slug=takarer" style="color:var(--dark);">تقارير</a>
+                <% if (isAdmin) { %><a href="/admin/quick-add?section=<%= encodeURIComponent('تقارير') %>" class="btn-add-article" style="display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;background:#157039;color:#fff;border-radius:50%;font-size:15px;margin-right:8px;text-decoration:none;vertical-align:middle;"><i class="fas fa-plus"></i></a><% } %>
+            </h2>
+            <a href="/section?slug=takarer" class="section-more" style="font-size:14px;color:var(--red);font-weight:600;">المزيد <i class="fas fa-arrow-left me-1"></i></a>
+        </div>
+        <div class="row">
+            <% for (var col = 0; col < 3; col++) { var cardIdx = col * 2; var listIdx = col * 2 + 1; var cardArt = takarerArts[cardIdx]; var listArt = takarerArts[listIdx]; %>
+            <div class="col-md-4">
+                <% if (cardArt) { %>
+                <div class="news-card" style="margin-bottom:20px;">
+                    <div class="card-img" style="position:relative;overflow:hidden;">
+                        <span class="card-badge" style="position:absolute;top:10px;right:10px;background:var(--red);color:var(--white);font-size:12px;font-weight:600;padding:3px 10px;"><%= (cardArt.tags && cardArt.tags[0]) || '' %></span>
+                        <img src="<%= cardArt.image || '' %>" alt="<%= cardArt.title || '' %>" style="width:100%;height:180px;object-fit:cover;"></div>
+                    <div class="card-body" style="padding:10px 0;">
+                        <h3 style="font-size:16px;font-weight:800;line-height:1.4;margin-bottom:5px;"><a href="/article?id=<%= cardArt.id %>" style="color:var(--dark);"><%= cardArt.title %></a></h3></div>
+                </div>
+                <% } %>
+                <% if (listArt) { %>
+                <div class="list-news-item" style="display:flex;gap:12px;margin-bottom:15px;padding-bottom:15px;border-bottom:1px solid #eee;">
+                    <img src="<%= listArt.image || '' %>" alt="<%= listArt.title || '' %>" style="width:120px;height:80px;object-fit:cover;flex-shrink:0;">
+                    <div><h4 style="font-size:14px;font-weight:700;line-height:1.4;margin:0;"><a href="/article?id=<%= listArt.id %>" style="color:var(--dark);"><%= listArt.title %></a></h4></div>
+                </div>
+                <% } %>
+            </div>
+            <% } %>
+        </div>
+    </div>
+</section>
+
 <% if (isAdmin) { %>
 <style>.news-card,.list-news-item{position:relative}.news-card .art-id,.list-news-item .art-id{position:absolute;top:4px;left:4px;background:#e74c3c;color:#fff;border-radius:4px;padding:1px 6px;font-size:10px;z-index:20;font-weight:700}</style>
 <script>

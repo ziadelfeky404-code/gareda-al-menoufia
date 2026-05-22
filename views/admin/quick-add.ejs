@@ -54,6 +54,24 @@
 </div>
 <div class="help-text">أدخل رابط URL أو ارفع صورة من جهازك</div>
 </div>
+<div class="row">
+<div class="col-md-6">
+<div class="form-group">
+<label>المؤلف</label>
+<input type="text" name="author" class="form-control" placeholder="اسم المؤلف" value="<%= body.author || 'بوابة الجامعة' %>">
+</div>
+</div>
+<div class="col-md-6">
+<div class="form-group">
+<label>التاريخ</label>
+<input type="date" name="date" class="form-control" value="<%= body.date || today %>">
+</div>
+</div>
+</div>
+<div class="form-group">
+<label>الوسوم (tags)</label>
+<input type="text" name="tags" class="form-control" placeholder="وسم1, وسم2, وسم3" value="<%= body.tags || '' %>">
+</div>
 <div class="form-group">
 <label>المحتوى (اختياري)</label>
 <textarea name="content" class="form-control" placeholder="نص المقال (كل سطر فقرة)"><%= body.content || '' %></textarea>

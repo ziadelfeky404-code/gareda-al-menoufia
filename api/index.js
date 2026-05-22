@@ -15,6 +15,18 @@ const ARTICLES_FILE = path.join(DATA_PATH, 'articles.json');
 const SETTINGS_FILE = path.join(DATA_PATH, 'settings.json');
 const MESSAGES_FILE = path.join(DATA_PATH, 'messages.json');
 
+const ALL_SECTIONS = ['أخبار المنوفية', 'منشآت الجامعة', 'ندوات ومؤتمرات', 'تكريم ومسابقات', 'الفن والمسابقات', 'رياضة ومسابقات', 'قيادات جامعية', 'تقارير'];
+const SECTION_FILE_MAP = {
+  'أخبار المنوفية': 'اخبار المنوفية.htm',
+  'منشآت الجامعة': 'منشات الجامعه.htm',
+  'ندوات ومؤتمرات': 'ندوات ومؤتمرات.htm',
+  'تكريم ومسابقات': 'تكريم ومسابقات.htm',
+  'الفن والمسابقات': 'صفحه الفن والمسابقات اخير.htm',
+  'رياضة ومسابقات': '',
+  'قيادات جامعية': '',
+  'تقارير': ''
+};
+
 // --- Data helpers (module-level cache) ---
 let _articles = null;
 let _settings = null;
@@ -211,7 +223,7 @@ app.use((req, res, next) => {
 // --- HOME ---
 app.get('/', (req, res) => {
   const articles = loadArticles();
-  const sections = ['أخبار المنوفية', 'منشآت الجامعة', 'ندوات ومؤتمرات', 'تكريم ومسابقات', 'الفن والمسابقات'];
+  const sections = ALL_SECTIONS;
   const sectionArticles = {};
   for (const sec of sections) {
     const arts = getArticlesBySection(sec).reverse();
@@ -222,6 +234,9 @@ app.get('/', (req, res) => {
   const nadawatArts = sectionArticles['ندوات ومؤتمرات'] || [];
   const takreemArts = sectionArticles['تكريم ومسابقات'] || [];
   const fannArts = sectionArticles['الفن والمسابقات'] || [];
+  const ryadaArts = sectionArticles['رياضة ومسابقات'] || [];
+  const qiyadatArts = sectionArticles['قيادات جامعية'] || [];
+  const takarerArts = sectionArticles['تقارير'] || [];
 
   // Ticker — auto-fill with random articles if not enough
   const tickerIds = getSetting('ticker_news_ids', []);
@@ -285,6 +300,7 @@ app.get('/', (req, res) => {
   res.render('index', {
     title: 'بوابة جامعة المنوفية الإخبارية',
     akhbarArts, monshatArts, nadawatArts, takreemArts, fannArts,
+    ryadaArts, qiyadatArts, takarerArts,
     tickerArticles, heroArts, heroSlides,
     mostReadArticles, urgentArticles, articles
   });
@@ -574,10 +590,8 @@ app.get('/admin/logout', (req, res) => {
 app.get(['/admin', '/admin/dashboard'], requireAdmin, (req, res) => {
   const articles = loadArticles();
   const totalArticles = articles.length;
-  const sectionCounts = {
-    'أخبار المنوفية': 0, 'منشآت الجامعة': 0, 'ندوات ومؤتمرات': 0,
-    'تكريم ومسابقات': 0, 'الفن والمسابقات': 0
-  };
+  const sectionCounts = {};
+  for (const s of ALL_SECTIONS) sectionCounts[s] = 0;
   for (const a of articles) {
     const sec = a.section || '';
     if (sectionCounts[sec] !== undefined) sectionCounts[sec]++;
@@ -632,7 +646,7 @@ app.get('/admin/article-add', requireAdmin, (req, res) => {
   res.render('admin/article-add', {
     title: 'إضافة مقال',
     message: '', error: '',
-    sections: ['أخبار المنوفية', 'منشآت الجامعة', 'ندوات ومؤتمرات', 'تكريم ومسابقات', 'الفن والمسابقات'],
+    sections: ALL_SECTIONS,
     admin: req.session.admin, body: {}
   });
 });
@@ -642,14 +656,8 @@ app.post('/admin/article-add', requireAdmin, upload.fields([
   { name: 'cover_image_file', maxCount: 1 },
   { name: 'gallery_files', maxCount: 20 }
 ]), (req, res) => {
-  const sections = ['أخبار المنوفية', 'منشآت الجامعة', 'ندوات ومؤتمرات', 'تكريم ومسابقات', 'الفن والمسابقات'];
-  const sectionFileMap = {
-    'أخبار المنوفية': 'اخبار المنوفية.htm',
-    'منشآت الجامعة': 'منشات الجامعه.htm',
-    'ندوات ومؤتمرات': 'ندوات ومؤتمرات.htm',
-    'تكريم ومسابقات': 'تكريم ومسابقات.htm',
-    'الفن والمسابقات': 'صفحه الفن والمسابقات اخير.htm'
-  };
+  const sections = ALL_SECTIONS;
+  const sectionFileMap = SECTION_FILE_MAP;
 
   let { title, section, image, cover_image, image_desc, date, author, tags, paragraphs, gallery_urls, gallery_descs } = req.body;
   title = (title || '').trim();
@@ -724,9 +732,7 @@ app.get('/admin/article-edit/:id', requireAdmin, (req, res) => {
   const article = getArticle(id);
   if (!article) return res.redirect('/admin/articles');
 
-  const sections = ['أخبار المنوفية', 'منشآت الجامعة', 'ندوات ومؤتمرات',
-    'تكريم ومسابقات', 'الفن والمسابقات',
-    'رياضة ومسابقات', 'قيادات جامعية', 'تقارير'];
+  const sections = ALL_SECTIONS;
 
   res.render('admin/article-edit', {
     title: 'تعديل مقال',
@@ -745,16 +751,8 @@ app.post('/admin/article-edit/:id', requireAdmin, upload.fields([
   let article = getArticle(id);
   if (!article) return res.redirect('/admin/articles');
 
-  const sections = ['أخبار المنوفية', 'منشآت الجامعة', 'ندوات ومؤتمرات',
-    'تكريم ومسابقات', 'الفن والمسابقات',
-    'رياضة ومسابقات', 'قيادات جامعية', 'تقارير'];
-  const sectionFileMap = {
-    'أخبار المنوفية': 'اخبار المنوفية.htm',
-    'منشآت الجامعة': 'منشات الجامعه.htm',
-    'ندوات ومؤتمرات': 'ندوات ومؤتمرات.htm',
-    'تكريم ومسابقات': 'تكريم ومسابقات.htm',
-    'الفن والمسابقات': 'صفحه الفن والمسابقات اخير.htm'
-  };
+  const sections = ALL_SECTIONS;
+  const sectionFileMap = SECTION_FILE_MAP;
 
   let { title, section, image, cover_image, image_desc, date, author, tags, paragraphs, gallery_urls, gallery_descs } = req.body;
   title = (title || '').trim();
@@ -1117,9 +1115,7 @@ app.post('/admin/ajax-save-pin', requireAdmin, (req, res) => {
 
 // --- QUICK ADD ---
 app.get('/admin/quick-add', requireAdmin, (req, res) => {
-  const sections = ['أخبار المنوفية', 'منشآت الجامعة', 'ندوات ومؤتمرات',
-    'تكريم ومسابقات', 'الفن والمسابقات',
-    'رياضة ومسابقات', 'قيادات جامعية', 'تقارير'];
+  const sections = ALL_SECTIONS;
   const presetSection = req.query.section && sections.includes(req.query.section) ? req.query.section : '';
   const today = new Date().toISOString().split('T')[0];
 
@@ -1134,16 +1130,8 @@ app.get('/admin/quick-add', requireAdmin, (req, res) => {
 app.post('/admin/quick-add', requireAdmin, upload.fields([
   { name: 'image_file', maxCount: 1 }
 ]), (req, res) => {
-  const sections = ['أخبار المنوفية', 'منشآت الجامعة', 'ندوات ومؤتمرات',
-    'تكريم ومسابقات', 'الفن والمسابقات',
-    'رياضة ومسابقات', 'قيادات جامعية', 'تقارير'];
-  const sectionFileMap = {
-    'أخبار المنوفية': 'اخبار المنوفية.htm',
-    'منشآت الجامعة': 'منشات الجامعه.htm',
-    'ندوات ومؤتمرات': 'ندوات ومؤتمرات.htm',
-    'تكريم ومسابقات': 'تكريم ومسابقات.htm',
-    'الفن والمسابقات': 'صفحه الفن والمسابقات اخير.htm'
-  };
+  const sections = ALL_SECTIONS;
+  const sectionFileMap = SECTION_FILE_MAP;
   const today = new Date().toISOString().split('T')[0];
 
   let { title, section, image, cover_image, image_desc, date, author, tags, paragraphs, gallery_urls, gallery_descs, redirect } = req.body;
@@ -1213,7 +1201,7 @@ app.post('/admin/quick-add', requireAdmin, upload.fields([
 
 // --- ARTICLE IMPORT ---
 app.get('/admin/article-import', requireAdmin, (req, res) => {
-  const sections = ['أخبار المنوفية', 'منشآت الجامعة', 'ندوات ومؤتمرات', 'تكريم ومسابقات', 'الفن والمسابقات'];
+  const sections = ALL_SECTIONS;
   res.render('admin/article-import', {
     title: 'استيراد مقال',
     sections,
@@ -1223,14 +1211,8 @@ app.get('/admin/article-import', requireAdmin, (req, res) => {
 });
 
 app.post('/admin/article-import', requireAdmin, upload.single('article_file'), async (req, res) => {
-  const sections = ['أخبار المنوفية', 'منشآت الجامعة', 'ندوات ومؤتمرات', 'تكريم ومسابقات', 'الفن والمسابقات'];
-  const sectionFileMap = {
-    'أخبار المنوفية': 'اخبار المنوفية.htm',
-    'منشآت الجامعة': 'منشات الجامعه.htm',
-    'ندوات ومؤتمرات': 'ندوات ومؤتمرات.htm',
-    'تكريم ومسابقات': 'تكريم ومسابقات.htm',
-    'الفن والمسابقات': 'صفحه الفن والمسابقات اخير.htm'
-  };
+  const sections = ALL_SECTIONS;
+  const sectionFileMap = SECTION_FILE_MAP;
 
   const section = req.body.section || '';
   const author = req.body.author || '';
