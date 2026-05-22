@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col-lg-4 col-md-6 mb-4">
                 <div class="footer-logo" style="margin-bottom:10px;">
-                    <a href="/"><img src="<%= getSetting('logo_url') %>" alt="<%= getSetting('site_name') %>" style="height:170px;width:auto;"></a>
+                    <a href="/"><img src="<%= getSetting('logo_url') %>" alt="<%= getSetting('site_name') %>" class="footer-logo-img" style="height:170px;width:auto;max-width:100%;"></a>
                 </div>
                 <h5>عن الجامعة</h5>
                 <p style="font-size:14px;font-weight:400;line-height:1.7;color:#aaa;">جامعة المنوفية إحدى الجامعات المصرية الرائدة، تأسست عام 1976، وتضم 17 كلية ومعهداً، وتسعى دائماً نحو التميز في التعليم والبحث العلمي وخدمة المجتمع.</p>
@@ -23,7 +23,7 @@
                     <% } %>
                 </ul>
             </div>
-            <div class="col-lg-6 col-md-6 mb-4">
+            <div class="col-lg-6 col-md-12 mb-4">
                 <h5>اتصل بنا</h5>
                 <ul>
                     <li><a href="<%= getSetting('maps_url') %>" target="_blank"><i class="fas fa-map-marker-alt ms-2"></i><%= getSetting('address') %></a></li>

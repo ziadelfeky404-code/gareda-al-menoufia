@@ -60,20 +60,70 @@ a,a:hover{text-decoration:none;color:var(--dark)}.container{max-width:1300px}
 .ad-banner-img{max-width:100%;height:auto;margin:15px 0;display:block}
 .top-bar .ad-banner{padding:0;margin:0;min-height:auto;font-size:11px;border:none;background:transparent;display:inline}
 .top-bar .ad-banner-img{margin:0;max-width:none;height:auto;max-height:50px;display:inline;vertical-align:middle}
+/* ===== MOBILE RESPONSIVE BREAKPOINTS ===== */
+
+/* Tablet landscape */
+@media(max-width:1199px){
+  .top-bar .row .d-flex{font-size:10px!important;line-height:1.4!important}
+  .top-bar .row img[style*="height:100px"]{height:75px!important}
+  .top-bar .row img[style*="height:80px"]{height:60px!important}
+  .top-bar .row img[style*="height:70px"]{height:50px!important}
+}
+/* Tablet portrait */
 @media(max-width:991px){
 .nav-section .navbar-nav .nav-link{font-size:13px;padding:5px 10px}
 .logo-text h1{font-size:22px}
 .search-box input{width:120px}
+.article-title{font-size:24px;}
+.floating-share{display:none}
+.ticker-section a{font-size:13px!important}
+.ticker-label{font-size:14px!important;padding:6px 12px!important}
 }
+/* Mobile */
 @media(max-width:767px){
-.top-bar .top-links{justify-content:center;font-size:12px}
+.top-bar .top-links{justify-content:center;font-size:11px}
+.top-bar .top-links .social-icon{width:18px;height:18px;font-size:10px}
+.top-bar .row .d-flex img[style*="height:100px"]{height:50px!important}
+.top-bar .row .d-flex img[style*="height:80px"]{height:40px!important}
+.top-bar .row .d-flex img[style*="height:70px"]{height:35px!important}
+.article-title{font-size:20px}
+.article-meta{flex-direction:column;align-items:flex-start}
+.article-meta .share-icons{margin-right:0}
+.related-card img{width:90px;height:80px}
+.hero-main{min-height:220px!important}
+.hero-main h2{font-size:18px!important}
+.hero-main .hero-overlay{padding:15px!important}
+.hero-main .hero-category{font-size:11px!important}
+.hero-side-item{min-height:130px!important}
+.hero-side-item h2{font-size:13px!important}
+.hero-side-item .hero-overlay{padding:10px!important}
+.hero-side-item .hero-category{font-size:10px!important}
+.ticker-section a{font-size:12px!important}
+.ticker-label{font-size:12px!important;padding:5px 10px!important}
+.section-title{font-size:16px!important}
+.section-title-wrap{flex-wrap:wrap;gap:6px}
+.news-card{margin-bottom:15px!important}
+.news-card img{height:160px!important}
+.footer-logo img{height:100px!important}
+.page-header h1{font-size:22px!important}
 }
+/* Small phones */
 @media(max-width:480px){
 .top-bar{padding:3px 0}
 .nav-section .navbar-nav .nav-link{font-size:13px;text-align:center}
 .search-box input{width:80px;font-size:12px}
 .search-box button{font-size:12px;padding:4px 8px}
 .article-title{font-size:18px}
+.hero-main{min-height:180px!important}
+.hero-main h2{font-size:15px!important}
+.hero-side-item h2{font-size:12px!important}
+.section-title-wrap .view-toggle a{font-size:11px!important;padding:3px 8px!important}
+.timeline-card .timeline-img{height:150px!important}
+.timeline-card .timeline-body h3{font-size:16px!important}
+.nav-section .navbar-nav .nav-link{padding:8px 15px!important;text-align:right!important;border-bottom:1px solid rgba(255,255,255,0.1)}
+.nav-section .navbar-nav{width:100%}
+.nav-section .search-box{width:100%;margin-top:8px;margin-bottom:8px}
+.nav-section .search-box input{width:100%!important}
 }
 .breadcrumb-section{background:#f8f8f8;padding:12px 0;border-bottom:1px solid #eee}
 .breadcrumb-section .breadcrumb{margin:0;font-size:14px;font-weight:400;background:none}
