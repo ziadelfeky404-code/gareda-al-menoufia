@@ -13,7 +13,7 @@
                     <div class="ticker-track" id="tickerTrack">
                         <% for (var i = 0; i < tickerArticles.length; i++) { var ta = tickerArticles[i]; %>
                         <% if (i > 0) { %><span class="ticker-dot" style="margin:0 12px;color:rgba(255,255,255,0.5);">|</span><% } %>
-                        <a href="/article?id=<%= ta.id %>" style="color:#fff;font-size:15px;font-weight:500;text-decoration:none;display:inline-block;margin:0 5px;"><%= ta.title %></a>
+                        <a href="/article?id=<%= ta.id %>" style="color:#fff!important;font-size:15px;font-weight:500;text-decoration:none;display:inline-block;margin:0 5px;"><%= ta.title %></a>
                         <% } %>
                     </div>
                 </div>
