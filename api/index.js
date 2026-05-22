@@ -1322,11 +1322,6 @@ app.post('/admin/article-import', requireAdmin, upload.single('article_file'), a
   }
 });
 
-// --- 404 ---
-app.use((req, res) => {
-  res.status(404).render('404', { title: '404 - الصفحة غير موجودة' });
-});
-
 // --- Debug endpoint to verify deployment ---
 app.get('/__debug', (req, res) => {
   const dataDir = DATA_PATH;
@@ -1346,6 +1341,11 @@ app.get('/__debug', (req, res) => {
     articles: loadArticles().length,
     uptime: process.uptime()
   });
+});
+
+// --- 404 ---
+app.use((req, res) => {
+  res.status(404).render('404', { title: '404 - الصفحة غير موجودة' });
 });
 
 // --- Error handler ---
