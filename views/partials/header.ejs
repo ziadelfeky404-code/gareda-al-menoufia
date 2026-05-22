@@ -25,10 +25,14 @@ a,a:hover{text-decoration:none;color:var(--dark)}.container{max-width:1300px}
 .logo-text small{font-size:13px;color:var(--gray-light);font-weight:500}
 .nav-section{position:sticky;top:0;z-index:999999;background:var(--red)}
 .nav-section .navbar{background:var(--red)!important;padding:0.3rem 0}
-.nav-section .navbar-nav .nav-link{color:var(--white);font-size:14px;font-weight:700;padding:6px 14px;border-radius:50px;transition:background .3s}
+.nav-section .navbar-nav{flex-wrap:nowrap}
+.nav-section .navbar-nav .nav-link{color:var(--white);font-size:14px;font-weight:700;padding:6px 14px;border-radius:50px;transition:background .3s;white-space:nowrap}
 .nav-section .navbar-nav .nav-link:hover{background:rgba(255,255,255,0.2)}
 .nav-section .navbar-toggler{border:none;color:var(--white);font-size:1.3rem}
 .nav-section .navbar-toggler:focus{box-shadow:none}
+.nav-scroll{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none}
+.nav-scroll::-webkit-scrollbar{display:none}
+.nav-section .navbar{padding:0.3rem 0;flex-wrap:nowrap}
 .search-box{display:flex;align-items:center}
 .search-box input{border:1px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.15);color:var(--white);padding:5px 12px;border-radius:0;font-size:14px;width:200px}
 .search-box input::placeholder{color:rgba(255,255,255,0.7)}
@@ -93,6 +97,7 @@ a,a:hover{text-decoration:none;color:var(--dark)}.container{max-width:1300px}
 /* Tablet portrait */
 @media(max-width:991px){
 .nav-section .navbar-nav .nav-link{font-size:13px;padding:5px 10px}
+.nav-scroll{gap:2px}
 .logo-text h1{font-size:22px}
 .search-box input{width:120px}
 .article-title{font-size:24px;}
@@ -102,6 +107,9 @@ a,a:hover{text-decoration:none;color:var(--dark)}.container{max-width:1300px}
 }
 /* Mobile */
 @media(max-width:767px){
+.nav-section .navbar-nav .nav-link{font-size:12px!important;padding:4px 8px!important;white-space:nowrap}
+.nav-section .search-box input{width:80px;font-size:12px}
+.nav-section .search-box button{font-size:12px;padding:4px 8px}
 .top-bar .top-links{justify-content:center;font-size:11px}
 .top-bar .top-links .social-icon{width:18px;height:18px;font-size:10px}
 .top-bar .row .d-flex img[style*="height:100px"]{height:50px!important}
@@ -130,21 +138,17 @@ a,a:hover{text-decoration:none;color:var(--dark)}.container{max-width:1300px}
 }
 /* Small phones */
 @media(max-width:480px){
-.top-bar{padding:3px 0}
-.nav-section .navbar-nav .nav-link{font-size:13px;text-align:center}
-.search-box input{width:80px;font-size:12px}
-.search-box button{font-size:12px;padding:4px 8px}
-.article-title{font-size:18px}
-.hero-main{min-height:180px!important}
-.hero-main h2{font-size:15px!important}
-.hero-side-item h2{font-size:12px!important}
-.section-title-wrap .view-toggle a{font-size:11px!important;padding:3px 8px!important}
-.timeline-card .timeline-img{height:150px!important}
-.timeline-card .timeline-body h3{font-size:16px!important}
-.nav-section .navbar-nav .nav-link{padding:8px 15px!important;text-align:right!important;border-bottom:1px solid rgba(255,255,255,0.1)}
-.nav-section .navbar-nav{width:100%}
-.nav-section .search-box{width:100%;margin-top:8px;margin-bottom:8px}
-.nav-section .search-box input{width:100%!important}
+  .top-bar{padding:3px 0}
+  .nav-section .navbar-nav .nav-link{font-size:11px!important;padding:3px 6px!important}
+  .nav-section .search-box input{width:60px;font-size:11px}
+  .nav-section .search-box button{font-size:11px;padding:3px 6px}
+  .article-title{font-size:18px}
+  .hero-main{min-height:180px!important}
+  .hero-main h2{font-size:15px!important}
+  .hero-side-item h2{font-size:12px!important}
+  .section-title-wrap .view-toggle a{font-size:11px!important;padding:3px 8px!important}
+  .timeline-card .timeline-img{height:150px!important}
+  .timeline-card .timeline-body h3{font-size:16px!important}
 }
 .breadcrumb-section{background:#f8f8f8;padding:12px 0;border-bottom:1px solid #eee}
 .breadcrumb-section .breadcrumb{margin:0;font-size:14px;font-weight:400;background:none}

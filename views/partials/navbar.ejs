@@ -1,17 +1,14 @@
 <section class="nav-section" style="position:sticky;top:0;z-index:999999">
-    <nav class="navbar navbar-expand-lg">
+    <nav class="navbar navbar-expand">
         <div class="container">
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
-                <i class="fas fa-bars"></i>
-            </button>
-            <div class="collapse navbar-collapse" id="mainNav">
-                <ul class="navbar-nav ms-auto">
+            <div class="d-flex align-items-center w-100" id="mainNav">
+                <ul class="navbar-nav ms-auto flex-nowrap nav-scroll">
                     <li class="nav-item"><a class="nav-link" href="/">الرئيسية</a></li>
                     <% var navSecs = getSections(); for (var i = 0; i < navSecs.length; i++) { var ns = navSecs[i]; %>
                     <li class="nav-item"><a class="nav-link" href="/section?slug=<%= ns.slug %>"><%= ns.name %></a></li>
                     <% } %>
                 </ul>
-                <div class="search-box me-2">
+                <div class="search-box me-2 flex-shrink-0">
                     <button type="button" onclick="var q=this.nextElementSibling.value;if(q.trim())window.location='/search?q='+encodeURIComponent(q.trim())"><i class="fas fa-search"></i></button>
                     <input type="text" class="searchInput" placeholder="بحث...">
                 </div>
