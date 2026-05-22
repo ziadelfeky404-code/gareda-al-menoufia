@@ -9,8 +9,29 @@ const app = express();
 
 // --- Paths ---
 const ROOT = path.resolve(__dirname, '..');
-const DATA_PATH = path.join(ROOT, 'data');
 const UPLOADS_PATH = path.join(ROOT, 'uploads');
+
+// On Vercel the filesystem is read-only except /tmp, so we store data files there
+const DATA_PATH = (() => {
+  const p = process.env.VERCEL ? '/tmp/data' : path.join(ROOT, 'data');
+  if (!fs.existsSync(p)) fs.mkdirSync(p, { recursive: true });
+  // On Vercel cold start, seed /tmp/data from the project data (read-only)
+  if (process.env.VERCEL) {
+    try {
+      const projectData = path.join(ROOT, 'data');
+      if (fs.existsSync(projectData)) {
+        for (const f of fs.readdirSync(projectData)) {
+          const dest = path.join(p, f);
+          if (!fs.existsSync(dest)) {
+            fs.copyFileSync(path.join(projectData, f), dest);
+          }
+        }
+      }
+    } catch (e) { console.error('Seed /tmp/data error:', e.message); }
+  }
+  return p;
+})();
+
 const ARTICLES_FILE = path.join(DATA_PATH, 'articles.json');
 const SETTINGS_FILE = path.join(DATA_PATH, 'settings.json');
 const MESSAGES_FILE = path.join(DATA_PATH, 'messages.json');
