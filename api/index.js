@@ -1324,10 +1324,31 @@ app.use((req, res) => {
   res.status(404).render('404', { title: '404 - الصفحة غير موجودة' });
 });
 
+// --- Debug endpoint to verify deployment ---
+app.get('/__debug', (req, res) => {
+  const dataDir = DATA_PATH;
+  let dataFiles = [];
+  try { if (fs.existsSync(dataDir)) dataFiles = fs.readdirSync(dataDir); } catch (e) { dataFiles = ['ERROR: ' + e.message]; }
+  let canWrite = false;
+  try {
+    fs.writeFileSync(path.join(dataDir, '.test'), 'ok');
+    canWrite = true;
+    fs.unlinkSync(path.join(dataDir, '.test'));
+  } catch (e) { canWrite = 'NO: ' + e.message; }
+  res.json({
+    vercel: !!process.env.VERCEL,
+    dataPath: dataDir,
+    dataFiles,
+    canWrite,
+    articles: loadArticles().length,
+    uptime: process.uptime()
+  });
+});
+
 // --- Error handler ---
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).send('Something broke!');
+  console.error('ERROR:', err.stack || err.message || err);
+  res.status(500).send('Something broke! ' + (err.message || ''));
 });
 
 // --- For local development ---
