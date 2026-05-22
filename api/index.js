@@ -1025,6 +1025,7 @@ app.get('/admin/section-order', requireAdmin, (req, res) => {
   res.render('admin/section-order', {
     title: 'ترتيب الأقسام',
     sections,
+    currentSlug: '', sectionName: '', articles: [],
     message: '', error: '',
     admin: req.session.admin
   });
