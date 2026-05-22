@@ -51,8 +51,8 @@
             <div>
                 <% if (hasOrder) { %>
                 <span class="view-toggle">
-                    <a href="/section?slug=<%= slug %>&view=grid" class="<%= (view!=='timeline')?'active':'' %>"><i class="fas fa-th-large"></i> شبكة</a>
-                    <a href="/section?slug=<%= slug %>&view=timeline" class="<%= (view==='timeline')?'active':'' %>"><i class="fas fa-tree"></i> شجرة</a>
+                    <a href="/section?slug=<%= slug %>&view=grid&page=<%= page %>" class="<%= (view!=='timeline')?'active':'' %>"><i class="fas fa-th-large"></i> شبكة</a>
+                    <a href="/section?slug=<%= slug %>&view=timeline&page=<%= page %>" class="<%= (view==='timeline')?'active':'' %>"><i class="fas fa-tree"></i> شجرة</a>
                 </span>
                 <% } %>
                 <span class="section-more" style="font-size:14px;color:var(--red);font-weight:600;">آخر الأخبار</span>
@@ -102,16 +102,16 @@
         </div>
         <% } %>
 
-        <% if (totalPages > 1) { %>
+        <% var vp = view === 'timeline' ? '&view=timeline' : ''; if (totalPages > 1) { %>
         <div class="pagination-wrap" style="display:flex;justify-content:center;gap:5px;margin:30px 0 20px;">
             <% if (page > 1) { %>
-            <a href="/section?slug=<%= slug %>&page=<%= page - 1 %>" style="display:inline-flex;align-items:center;justify-content:center;min-width:36px;height:36px;padding:0 10px;border:1px solid #ddd;font-size:14px;font-weight:600;color:#555;border-radius:4px;transition:all 0.2s;"><i class="fas fa-chevron-right"></i></a>
+            <a href="/section?slug=<%= slug %>&page=<%= page - 1 %><%= vp %>" style="display:inline-flex;align-items:center;justify-content:center;min-width:36px;height:36px;padding:0 10px;border:1px solid #ddd;font-size:14px;font-weight:600;color:#555;border-radius:4px;transition:all 0.2s;"><i class="fas fa-chevron-right"></i></a>
             <% } %>
             <% for (var p = 1; p <= totalPages; p++) { %>
-            <a href="/section?slug=<%= slug %>&page=<%= p %>" <%= p === page ? 'class="active"' : '' %> style="display:inline-flex;align-items:center;justify-content:center;min-width:36px;height:36px;padding:0 10px;border:1px solid #ddd;font-size:14px;font-weight:600;color:#555;border-radius:4px;transition:all 0.2s;<%= p === page ? 'background:var(--red);color:var(--white);border-color:var(--red);' : '' %>"><%= p %></a>
+            <a href="/section?slug=<%= slug %>&page=<%= p %><%= vp %>" <%= p === page ? 'class="active"' : '' %> style="display:inline-flex;align-items:center;justify-content:center;min-width:36px;height:36px;padding:0 10px;border:1px solid #ddd;font-size:14px;font-weight:600;color:#555;border-radius:4px;transition:all 0.2s;<%= p === page ? 'background:var(--red);color:var(--white);border-color:var(--red);' : '' %>"><%= p %></a>
             <% } %>
             <% if (page < totalPages) { %>
-            <a href="/section?slug=<%= slug %>&page=<%= page + 1 %>" style="display:inline-flex;align-items:center;justify-content:center;min-width:36px;height:36px;padding:0 10px;border:1px solid #ddd;font-size:14px;font-weight:600;color:#555;border-radius:4px;transition:all 0.2s;"><i class="fas fa-chevron-left"></i></a>
+            <a href="/section?slug=<%= slug %>&page=<%= page + 1 %><%= vp %>" style="display:inline-flex;align-items:center;justify-content:center;min-width:36px;height:36px;padding:0 10px;border:1px solid #ddd;font-size:14px;font-weight:600;color:#555;border-radius:4px;transition:all 0.2s;"><i class="fas fa-chevron-left"></i></a>
             <% } %>
         </div>
         <% } %>
