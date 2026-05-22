@@ -585,20 +585,19 @@ app.get(['/index.php', '/article.php', '/section.php', '/search.php', '/contact.
 // --- LOGIN ---
 app.get('/admin/login', (req, res) => {
   if (req.session && req.session.admin) return res.redirect('/admin/dashboard');
-  res.render('admin/login', { title: 'تسجيل الدخول', error: '', logo: getSetting('logo_url', '') });
+  const error = req.query.error === '1' ? 'اسم المستخدم أو كلمة المرور غير صحيحة' : '';
+  res.render('admin/login', { title: 'تسجيل الدخول', error, logo: getSetting('logo_url', '') });
 });
 
 app.post('/admin/login', (req, res) => {
   const username = req.body.username || '';
   const password = req.body.password || '';
-  let error = '';
 
   if (username === 'admin' && password === 'password') {
     req.session.admin = { username: 'admin', display_name: 'مدير الموقع' };
     return res.redirect('/admin/dashboard');
   }
-  error = 'اسم المستخدم أو كلمة المرور غير صحيحة';
-  res.render('admin/login', { title: 'تسجيل الدخول', error, logo: getSetting('logo_url', '') });
+  res.redirect('/admin/login?error=1');
 });
 
 // --- LOGOUT ---
