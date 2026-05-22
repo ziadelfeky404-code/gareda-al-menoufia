@@ -1,13 +1,12 @@
 <%- include('../partials/admin-header', { title: title }) %>
 <div class="admin-wrap">
 <div class="container-fluid">
-<div class="row">
-<div class="col-12 mb-4">
-<h1 class="admin-title"><i class="fas fa-tachometer-alt ms-2"></i> لوحة التحكم</h1>
-</div>
+<div class="d-flex justify-content-between align-items-center mb-3">
+<h1 class="admin-title mb-0"><i class="fas fa-tachometer-alt ms-2"></i> لوحة التحكم</h1>
+<div style="font-size:12px;color:#888;font-weight:400"><i class="far fa-clock ms-1"></i> آخر تحديث: <%= new Date().toLocaleString('ar-EG') %></div>
 </div>
 <div class="row g-3 mb-4">
-<div class="col-md-3">
+<div class="col-6 col-md-3">
 <div class="stat-card">
 <div class="stat-icon" style="background:#e8f5e9;color:#2e7d32"><i class="fas fa-newspaper"></i></div>
 <div class="stat-body">
@@ -16,16 +15,16 @@
 </div>
 </div>
 </div>
-<div class="col-md-3">
+<div class="col-6 col-md-3">
 <div class="stat-card">
 <div class="stat-icon" style="background:#e3f2fd;color:#1565c0"><i class="fas fa-tags"></i></div>
 <div class="stat-body">
-<h3><%= Object.keys(sectionCounts).length %></h3>
-<p>الأقسام</p>
+<h3><%= Object.keys(sectionCounts).filter(function(k){return sectionCounts[k]>0}).length %></h3>
+<p>أقسام بها مقالات</p>
 </div>
 </div>
 </div>
-<div class="col-md-3">
+<div class="col-6 col-md-3">
 <div class="stat-card">
 <div class="stat-icon" style="background:#fff3e0;color:#e65100"><i class="fas fa-clock"></i></div>
 <div class="stat-body">
@@ -34,7 +33,7 @@
 </div>
 </div>
 </div>
-<div class="col-md-3">
+<div class="col-6 col-md-3">
 <div class="stat-card">
 <div class="stat-icon" style="background:#fce4ec;color:#c62828"><i class="fas fa-envelope"></i></div>
 <div class="stat-body">
@@ -44,11 +43,21 @@
 </div>
 </div>
 </div>
+<div class="admin-quick-bar">
+<a href="/admin/quick-add"><i class="fas fa-plus-circle"></i> إضافة سريعة</a>
+<a href="/admin/article-add"><i class="fas fa-plus"></i> إضافة مقال</a>
+<a href="/admin/article-import"><i class="fas fa-file-import"></i> استيراد مقالات</a>
+<a href="/admin/homepage"><i class="fas fa-home"></i> إدارة الصفحة الرئيسية</a>
+<a href="/admin/section-order"><i class="fas fa-sort"></i> ترتيب المقالات</a>
+<a href="/admin/sections"><i class="fas fa-tags"></i> إدارة الأقسام</a>
+<a href="/admin/settings"><i class="fas fa-cog"></i> إعدادات الموقع</a>
+<a href="/admin/messages"><i class="fas fa-envelope"></i> الرسائل</a>
+</div>
 <div class="row g-4">
 <div class="col-lg-8">
 <div class="admin-card">
 <div class="card-header-custom">
-<i class="fas fa-clock ms-2"></i> آخر المقالات المضافة
+<i class="fas fa-clock ms-2"></i> آخر 10 مقالات
 <a href="/admin/articles" class="btn-sm-link">عرض الكل <i class="fas fa-arrow-left"></i></a>
 </div>
 <div class="admin-table-wrap">
@@ -58,16 +67,42 @@
 <% for (var i = 0; i < recentArticles.length; i++) { var a = recentArticles[i]; %>
 <tr>
 <td><%= a.id %></td>
-<td><a href="/article?id=<%= a.id %>" target="_blank"><%= a.title.substring(0, 50) %><% if (a.title.length > 50) { %>...<% } %></a></td>
+<td><a href="/article?id=<%= a.id %>" target="_blank"><%= a.title.substring(0, 60) %><% if (a.title.length > 60) { %>...<% } %></a></td>
 <td><span class="badge-section"><%= a.section %></span></td>
-<td style="font-size:12px;color:#888;font-weight:400"><%= a.date %></td>
+<td style="font-size:12px;color:#888;font-weight:400"><%= a.date || '-' %></td>
 <td class="actions-cell">
 <a href="/admin/article-edit/<%= a.id %>" class="btn-action btn-edit" title="تعديل"><i class="fas fa-edit"></i></a>
+<a href="/article?id=<%= a.id %>" target="_blank" class="btn-action btn-view" title="عرض"><i class="fas fa-external-link-alt"></i></a>
 </td>
 </tr>
 <% } %>
 <% if (!recentArticles.length) { %>
 <tr><td colspan="5" style="text-align:center;padding:30px;color:#999;font-weight:400">لا توجد مقالات</td></tr>
+<% } %>
+</tbody>
+</table>
+</div>
+</div>
+<div class="admin-card">
+<div class="card-header-custom">
+<i class="fas fa-envelope ms-2"></i> آخر الرسائل
+<a href="/admin/messages" class="btn-sm-link">عرض الكل <i class="fas fa-arrow-left"></i></a>
+</div>
+<div class="admin-table-wrap">
+<table class="admin-table">
+<thead><tr><th>#</th><th>الاسم</th><th>البريد</th><th>الموضوع</th><th>الحالة</th></tr></thead>
+<tbody>
+<% for (var i = 0; i < recentMessages.length; i++) { var m = recentMessages[i]; %>
+<tr>
+<td><%= i+1 %></td>
+<td><%= m.name || '-' %></td>
+<td style="font-size:12px;color:#888;font-weight:400"><%= m.email || '-' %></td>
+<td><%= (m.subject || m.message || '').substring(0, 50) %></td>
+<td><% if (m.read) { %><span style="color:#888;font-size:12px">مقروء</span><% } else { %><span style="color:#e74c3c;font-weight:700;font-size:12px">جديد</span><% } %></td>
+</tr>
+<% } %>
+<% if (!recentMessages.length) { %>
+<tr><td colspan="5"><div class="empty-state-admin"><i class="far fa-envelope"></i> لا توجد رسائل</div></td></tr>
 <% } %>
 </tbody>
 </table>
@@ -92,21 +127,6 @@
 </div>
 </div>
 <% } %>
-</div>
-</div>
-<div class="admin-card mt-3">
-<div class="card-header-custom">
-<i class="fas fa-bolt ms-2"></i> إجراءات سريعة
-</div>
-<div class="card-body-custom d-flex gap-2 flex-wrap">
-<a href="/admin/quick-add" class="btn btn-success btn-sm"><i class="fas fa-plus"></i> إضافة سريعة</a>
-<a href="/admin/article-add" class="btn btn-primary btn-sm"><i class="fas fa-plus-circle"></i> إضافة مقال</a>
-<a href="/admin/article-import" class="btn btn-info btn-sm text-white"><i class="fas fa-file-import"></i> استيراد</a>
-<a href="/admin/sections" class="btn btn-warning btn-sm"><i class="fas fa-tags"></i> الأقسام</a>
-<a href="/admin/homepage" class="btn btn-primary btn-sm" style="background:#1a5276"><i class="fas fa-home"></i> الصفحة الرئيسية</a>
-<a href="/admin/section-order" class="btn btn-primary btn-sm" style="background:#6c3483"><i class="fas fa-sort"></i> ترتيب الأقسام</a>
-<a href="/admin/settings" class="btn btn-secondary btn-sm"><i class="fas fa-cog"></i> الإعدادات</a>
-<a href="/admin/messages" class="btn btn-danger btn-sm"><i class="fas fa-envelope"></i> الرسائل</a>
 </div>
 </div>
 </div>

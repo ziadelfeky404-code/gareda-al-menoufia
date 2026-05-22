@@ -616,21 +616,23 @@ app.get(['/admin', '/admin/dashboard'], requireAdmin, (req, res) => {
     const sec = a.section || '';
     if (sectionCounts[sec] !== undefined) sectionCounts[sec]++;
   }
-  const recentArticles = [...articles].reverse().slice(0, 5);
+  const recentArticles = [...articles].reverse().slice(0, 10);
 
   let unreadMsgs = 0;
+  let allMessages = [];
   try {
     if (fs.existsSync(MESSAGES_FILE)) {
-      const allMsgs = JSON.parse(fs.readFileSync(MESSAGES_FILE, 'utf8'));
-      if (Array.isArray(allMsgs)) {
-        for (const m of allMsgs) { if (!m.read) unreadMsgs++; }
+      allMessages = JSON.parse(fs.readFileSync(MESSAGES_FILE, 'utf8'));
+      if (Array.isArray(allMessages)) {
+        for (const m of allMessages) { if (!m.read) unreadMsgs++; }
       }
     }
   } catch (e) {}
+  const recentMessages = Array.isArray(allMessages) ? allMessages.slice(-5).reverse() : [];
 
   res.render('admin/dashboard', {
     title: 'لوحة التحكم',
-    totalArticles, sectionCounts, recentArticles, unreadMsgs,
+    totalArticles, sectionCounts, recentArticles, unreadMsgs, recentMessages,
     admin: req.session.admin
   });
 });
@@ -642,9 +644,14 @@ app.get('/admin/articles', requireAdmin, (req, res) => {
     'تكريم ومسابقات', 'الفن والمسابقات',
     'رياضة ومسابقات', 'قيادات جامعية', 'تقارير'];
   const selectedSection = req.query.section || '';
+  const searchQuery = (req.query.q || '').trim();
 
   if (selectedSection) {
     articles = articles.filter(a => a.section === selectedSection);
+  }
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase();
+    articles = articles.filter(a => (a.title || '').toLowerCase().includes(q));
   }
 
   const perPage = 20;
@@ -656,7 +663,7 @@ app.get('/admin/articles', requireAdmin, (req, res) => {
 
   res.render('admin/articles', {
     title: 'المقالات',
-    sections, selectedSection, page, totalPages, pageArticles, total,
+    sections, selectedSection, searchQuery, page, totalPages, pageArticles, total,
     admin: req.session.admin
   });
 });

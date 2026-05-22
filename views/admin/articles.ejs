@@ -2,8 +2,10 @@
 <style>
 .section-filter{margin-bottom:20px}
 .section-filter .filter-form{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.section-filter select{padding:8px 12px;border:2px solid #ddd;border-radius:6px;font-size:14px;font-family:'Cairo',sans-serif;font-weight:400}
+.section-filter select{padding:8px 12px;border:2px solid #ddd;border-radius:6px;font-size:14px;font-family:'Cairo',sans-serif;font-weight:400;min-width:150px}
 .section-filter select:focus{outline:none;border-color:#157039}
+.section-filter input[type="text"]{padding:8px 12px;border:2px solid #ddd;border-radius:6px;font-size:14px;font-family:'Cairo',sans-serif;min-width:200px}
+.section-filter input[type="text"]:focus{outline:none;border-color:#157039}
 .pagination-wrap{display:flex;justify-content:center;gap:4px;margin-top:20px}
 .pagination-wrap a{padding:6px 13px;border:1px solid #ddd;border-radius:4px;color:#555;font-size:13px;transition:all 0.2s}
 .pagination-wrap a.active{background:#157039;color:#fff;border-color:#157039}
@@ -11,10 +13,11 @@
 </style>
 <div class="admin-wrap">
 <div class="container-fluid">
-<div class="row">
-<div class="col-12 mb-4 d-flex justify-content-between align-items-center">
+<div class="d-flex justify-content-between align-items-center mb-3">
 <h1 class="admin-title mb-0"><i class="fas fa-newspaper ms-2"></i> المقالات (<%= total %>)</h1>
+<div class="d-flex gap-2">
 <a href="/admin/article-add" class="btn btn-primary btn-sm"><i class="fas fa-plus-circle"></i> إضافة مقال</a>
+<a href="/admin/quick-add" class="btn btn-success btn-sm"><i class="fas fa-plus"></i> إضافة سريعة</a>
 </div>
 </div>
 <div class="section-filter">
@@ -25,7 +28,8 @@
 <option value="<%= s.slug %>" <%= selectedSection === s.slug ? 'selected' : '' %>><%= s.name %></option>
 <% } %>
 </select>
-<button type="submit" class="btn btn-secondary btn-sm"><i class="fas fa-filter"></i> تصفية</button>
+<input type="text" name="q" placeholder="🔍 بحث بالعنوان..." value="<%= searchQuery || '' %>">
+<button type="submit" class="btn btn-secondary btn-sm"><i class="fas fa-search"></i> بحث</button>
 <a href="/admin/articles" class="btn btn-outline-secondary btn-sm"><i class="fas fa-times"></i></a>
 </form>
 </div>
@@ -39,17 +43,17 @@
 <td><%= a.id %></td>
 <td><a href="/article?id=<%= a.id %>" target="_blank" style="font-weight:700"><%= a.title.substring(0, 60) %><% if (a.title.length > 60) { %>...<% } %></a></td>
 <td><span class="badge-section"><%= a.section %></span></td>
-<td><% if (a.image) { %><img src="<%= a.image %>" style="width:50px;height:40px;object-fit:cover;border-radius:3px;"><% } else { %><span style="color:#ccc;font-size:11px">لا توجد</span><% } %></td>
+<td><% if (a.image) { %><img src="<%= a.image %>" style="width:50px;height:40px;object-fit:cover;border-radius:3px;"><% } else { %><span style="color:#ccc;font-size:11px">—</span><% } %></td>
 <td style="font-size:12px;color:#888;font-weight:400"><%= a.date || '' %></td>
 <td class="actions-cell">
 <a href="/admin/article-edit/<%= a.id %>" class="btn-action btn-edit" title="تعديل"><i class="fas fa-edit"></i></a>
 <a href="/article?id=<%= a.id %>" target="_blank" class="btn-action btn-view" title="عرض"><i class="fas fa-external-link-alt"></i></a>
-<button onclick="if(confirm('حذف المقال #<%= a.id %>؟'))window.location='/admin/article-delete/<%= a.id %>?redirect=<%= encodeURIComponent('/admin/articles') %>'" class="btn-action btn-delete" title="حذف"><i class="fas fa-trash"></i></button>
+<button onclick="if(confirm('حذف المقال #<%= a.id %> نهائياً؟'))window.location='/admin/article-delete/<%= a.id %>?redirect=<%= encodeURIComponent('/admin/articles') %>'" class="btn-action btn-delete" title="حذف"><i class="fas fa-trash"></i></button>
 </td>
 </tr>
 <% } %>
 <% if (!pageArticles.length) { %>
-<tr><td colspan="6" style="text-align:center;padding:30px;color:#999;font-weight:400">لا توجد مقالات في هذا القسم</td></tr>
+<tr><td colspan="6"><div class="empty-state-admin"><i class="far fa-newspaper"></i> لا توجد مقالات<%= searchQuery ? ' تطابق البحث' : ' في هذا القسم' %></div></td></tr>
 <% } %>
 </tbody>
 </table>
@@ -58,7 +62,7 @@
 <% if (totalPages > 1) { %>
 <div class="pagination-wrap">
 <% for (var p = 1; p <= totalPages; p++) { %>
-<a href="/admin/articles?page=<%= p %><%= selectedSection ? '&section=' + encodeURIComponent(selectedSection) : '' %>" class="<%= p === page ? 'active' : '' %>"><%= p %></a>
+<a href="/admin/articles?page=<%= p %><%= selectedSection ? '&section=' + encodeURIComponent(selectedSection) : '' %><%= searchQuery ? '&q=' + encodeURIComponent(searchQuery) : '' %>" class="<%= p === page ? 'active' : '' %>"><%= p %></a>
 <% } %>
 </div>
 <% } %>

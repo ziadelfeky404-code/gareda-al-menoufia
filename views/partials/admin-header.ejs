@@ -54,20 +54,40 @@ body{font-family:var(--fonts);font-size:14px;text-align:right;background:#f4f6f9
 .nav-link-admin{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:6px;color:#555;font-size:14px;font-weight:600;transition:all 0.2s;text-decoration:none;margin-bottom:2px}
 .nav-link-admin:hover,.nav-link-admin.active{background:#e8f5e9;color:#157039}
 .nav-link-admin i{width:20px;text-align:center}
+.admin-quick-bar{display:flex;gap:4px;flex-wrap:wrap;background:#f8f9fa;padding:8px 15px;border-radius:6px;margin-bottom:20px;border:1px solid #eee}
+.admin-quick-bar a{font-size:12px;font-weight:700;padding:5px 12px;border-radius:4px;color:#555;text-decoration:none;transition:all 0.2s;white-space:nowrap}
+.admin-quick-bar a:hover{background:#e8f5e9;color:#157039}
+.admin-quick-bar a i{margin-left:4px}
+.search-input{display:inline-flex;align-items:center;gap:6px;background:#fff;border:2px solid #ddd;border-radius:6px;padding:2px 10px}
+.search-input input{border:none;padding:5px;font-size:13px;font-family:'Cairo',sans-serif;width:200px;outline:none;background:transparent}
+.search-input input:focus+.search-icon,.search-input:hover{border-color:#157039}
+.search-input .search-icon{color:#aaa}
+.date-badge{background:#e8f5e9;color:#2e7d32;font-size:11px;padding:2px 8px;border-radius:3px}
+.empty-state-admin{text-align:center;padding:40px 20px;color:#999;font-size:14px;font-weight:400}
+.empty-state-admin i{font-size:40px;color:#ddd;display:block;margin-bottom:10px}
 @media(max-width:767px){
 .admin-title{font-size:20px}
+.admin-quick-bar{overflow-x:auto;flex-wrap:nowrap;justify-content:flex-start}
+.admin-quick-bar a{font-size:11px;padding:4px 8px}
 }
 </style>
 </head>
 <body>
 <div class="admin-topbar">
-<div class="container-fluid d-flex justify-content-between align-items-center">
+<div class="container-fluid d-flex justify-content-between align-items-center flex-wrap" style="gap:4px">
 <div class="admin-brand"><i class="fas fa-crown ms-1"></i> <%= getSetting('site_name') %></div>
-<div>
-<a href="/admin/quick-add"><i class="fas fa-plus-circle"></i> إضافة</a>
-<a href="/admin/dashboard"><i class="fas fa-tachometer-alt"></i> لوحة التحكم</a>
+<div class="d-flex align-items-center flex-wrap" style="gap:2px">
+<a href="/admin/dashboard"><i class="fas fa-tachometer-alt"></i> الرئيسية</a>
+<a href="/admin/quick-add"><i class="fas fa-plus-circle"></i> إضافة سريعة</a>
+<a href="/admin/article-add"><i class="fas fa-plus"></i> مقال</a>
+<a href="/admin/articles"><i class="fas fa-newspaper"></i> المقالات</a>
+<a href="/admin/homepage"><i class="fas fa-home"></i> الصفحة الرئيسية</a>
+<a href="/admin/section-order"><i class="fas fa-sort"></i> ترتيب</a>
+<a href="/admin/sections"><i class="fas fa-tags"></i> أقسام</a>
+<a href="/admin/settings"><i class="fas fa-cog"></i> إعدادات</a>
+<a href="/admin/messages"><i class="fas fa-envelope"></i> رسائل</a>
 <a href="/" target="_blank"><i class="fas fa-external-link-alt"></i> الموقع</a>
-<a href="/admin/logout" style="margin-right:10px"><i class="fas fa-sign-out-alt"></i> خروج</a>
+<a href="/admin/logout" style="margin-right:5px;color:#e74c3c"><i class="fas fa-sign-out-alt"></i> خروج</a>
 </div>
 </div>
 </div>
