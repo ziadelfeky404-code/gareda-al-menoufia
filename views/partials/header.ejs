@@ -69,6 +69,15 @@ a,a:hover{text-decoration:none;color:var(--dark)}.container{max-width:1300px}
   .top-bar .row img[style*="height:80px"]{height:60px!important}
   .top-bar .row img[style*="height:70px"]{height:50px!important}
 }
+/* Mobile: header text row below logos */
+@media(max-width:767.98px){
+  .header-main-row .col-4{padding:0 4px}
+  .header-logo-img,.header-college-img,.header-jubilee-img{height:auto!important;max-height:55px!important;max-width:100%!important}
+  .header-text-row{margin-top:2px;background:#fafafa;border-radius:4px;padding:3px 0!important}
+}
+@media(max-width:480px){
+  .header-logo-img,.header-college-img,.header-jubilee-img{max-height:45px!important}
+}
 /* Tablet portrait */
 @media(max-width:991px){
 .nav-section .navbar-nav .nav-link{font-size:13px;padding:5px 10px}

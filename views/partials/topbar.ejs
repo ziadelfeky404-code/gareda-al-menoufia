@@ -13,13 +13,24 @@
                 </div>
             </div>
         </div>
-        <div class="row align-items-start py-2">
+        <div class="row align-items-start py-2 header-main-row">
+            <!-- University logo -->
             <div class="col-4 col-md-3 d-flex justify-content-start">
                 <a href="/">
-                    <img src="<%= getSetting('logo_url') %>" alt="<%= getSetting('site_name') %>" style="height:100px;width:auto;max-width:100%;">
+                    <img src="<%= getSetting('logo_url') %>" alt="<%= getSetting('site_name') %>" class="header-logo-img" style="height:100px;width:auto;max-width:100%;">
                 </a>
             </div>
-            <div class="col-4 col-md-2 d-flex flex-column align-items-center justify-content-center d-none d-md-flex" style="font-size:11px;line-height:1.5;color:#555;font-weight:400;text-align:center;font-family:'Cairo',sans-serif;">
+            <!-- Jubilee image -->
+            <div class="col-4 col-md-2 d-flex flex-column align-items-center">
+                <img src="/uploads/WhatsApp Image 2026-05-22 at 4.46.05 AM.jpeg" alt="اليوبيل الذهبي" class="header-jubilee-img" style="height:70px;width:auto;max-height:55px;">
+                <div class="d-none d-md-block" style="font-size:13px;font-weight:800;color:var(--red);margin-top:3px;">اليوبيل الذهبي</div>
+            </div>
+            <!-- College logo -->
+            <div class="col-4 col-md-2 d-flex justify-content-end">
+                <img src="/uploads/EDV_ar-removebg-preview.png" alt="شعار الكلية" class="header-college-img" style="height:80px;width:auto;max-height:60px;">
+            </div>
+            <!-- Editorial info (desktop, inline) -->
+            <div class="col-md-2 d-none d-md-flex flex-column align-items-center justify-content-center text-center" style="font-size:11px;line-height:1.5;color:#555;font-weight:400;font-family:'Cairo',sans-serif;">
                 <div style="font-weight:700;color:var(--dark);font-size:12px;margin-bottom:2px;">إعداد وتحرير</div>
                 <div>طلاب قسم الإعلام</div>
                 <div>دفعة ٢٠٢٥-٢٠٢٦م</div>
@@ -27,11 +38,8 @@
                 <div style="font-size:10px;color:#888;">عن اليوبيل الذهبي الـ ٥٠</div>
                 <div style="font-size:10px;color:#888;">لجامعة المنوفية</div>
             </div>
-            <div class="col-4 col-md-2 d-flex flex-column align-items-center">
-                <img src="/uploads/WhatsApp Image 2026-05-22 at 4.46.05 AM.jpeg" alt="اليوبيل الذهبي" style="height:70px;width:auto;max-height:55px;">
-                <div class="d-none d-md-block" style="font-size:13px;font-weight:800;color:var(--red);margin-top:3px;">اليوبيل الذهبي</div>
-            </div>
-            <div class="col-3 d-flex flex-column align-items-center justify-content-center d-none d-lg-flex" style="font-size:11px;line-height:1.5;color:#555;font-weight:400;text-align:center;font-family:'Cairo',sans-serif;">
+            <!-- Supervision info (desktop, inline) -->
+            <div class="col-md-3 d-none d-lg-flex flex-column align-items-center justify-content-center text-center" style="font-size:11px;line-height:1.5;color:#555;font-weight:400;font-family:'Cairo',sans-serif;">
                 <div style="font-weight:700;color:var(--dark);font-size:12px;margin-bottom:3px;">إشراف</div>
                 <div>أ.د عبدالخالق زقزوق</div>
                 <div>أ.د هشام رشدي</div>
@@ -44,8 +52,22 @@
                     <div>أ.د محمد زيدان عبدالحميد</div>
                 </div>
             </div>
-            <div class="d-none d-md-block col-md-2 d-flex justify-content-end">
-                <img src="/uploads/EDV_ar-removebg-preview.png" alt="شعار الكلية" style="height:80px;width:auto;max-height:60px;">
+        </div>
+        <!-- Text blocks row (mobile only, below logos) -->
+        <div class="row align-items-center py-1 d-md-none header-text-row">
+            <div class="col-6 d-flex flex-column align-items-center text-center" style="font-size:10px;line-height:1.5;color:#555;font-weight:400;font-family:'Cairo',sans-serif;border-left:1px solid #ddd;">
+                <div style="font-weight:700;color:var(--dark);font-size:11px;margin-bottom:1px;">إعداد وتحرير</div>
+                <div>طلاب قسم الإعلام</div>
+                <div>دفعة ٢٠٢٥-٢٠٢٦م</div>
+                <div style="font-size:9px;color:#888;">صحيفة اليوبيل الذهبي</div>
+            </div>
+            <div class="col-6 d-flex flex-column align-items-center text-center" style="font-size:10px;line-height:1.5;color:#555;font-weight:400;font-family:'Cairo',sans-serif;">
+                <div style="font-weight:700;color:var(--dark);font-size:11px;margin-bottom:1px;">إشراف</div>
+                <div>أ.د عبدالخالق زقزوق</div>
+                <div>أ.د هشام رشدي</div>
+                <div style="margin-top:2px;padding-top:2px;border-top:1px solid #ddd;font-size:9px;">
+                    <span style="font-weight:600;">رئيس التحرير:</span> أ.د محمد زيدان
+                </div>
             </div>
         </div>
     </div>
