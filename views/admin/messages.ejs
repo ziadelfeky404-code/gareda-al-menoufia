@@ -1,23 +1,28 @@
 <%- include('../partials/admin-header', { title: title }) %>
 <style>
-.message-card{border:1px solid #eee;border-radius:8px;margin-bottom:12px;padding:18px 20px;background:#fff;transition:box-shadow 0.2s}
+.message-card{border:1px solid #eee;border-radius:8px;margin-bottom:12px;padding:18px 20px;background:#fff;transition:box-shadow 0.2s;cursor:pointer}
 .message-card:hover{box-shadow:0 2px 8px rgba(0,0,0,0.06)}
-.message-card .msg-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-.message-card .msg-header h4{font-size:15px;font-weight:800;color:#333;margin:0}
+.message-card .msg-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;cursor:pointer}
+.message-card .msg-header h4{font-size:15px;font-weight:800;color:#333;margin:0;display:flex;align-items:center;gap:6px}
 .message-card .msg-header .msg-date{font-size:11px;color:#999;font-weight:400}
 .message-card .msg-meta{font-size:12px;color:#666;font-weight:400;margin-bottom:8px}
 .message-card .msg-meta i{margin-left:4px;color:#157039}
-.message-card .msg-body{font-size:14px;color:#555;font-weight:400;line-height:1.7;padding:12px;background:#fafafa;border-radius:6px;border-right:3px solid #157039}
+.message-card .msg-body{font-size:14px;color:#555;font-weight:400;line-height:1.7;padding:12px;background:#fafafa;border-radius:6px;border-right:3px solid #157039;display:none;margin-top:8px}
+.message-card .msg-body.show{display:block}
 .message-card .msg-actions{margin-top:10px;text-align:left}
+.message-card .msg-toggle{color:#157039;font-size:11px;font-weight:700;margin-right:8px}
 .empty-state{text-align:center;padding:60px 20px;color:#999}
 .empty-state i{font-size:48px;color:#ddd;margin-bottom:15px}
 .empty-state h4{font-size:18px;font-weight:700;color:#666}
+.unread-badge{display:inline-block;background:#e74c3c;color:#fff;font-size:10px;padding:1px 7px;border-radius:8px;margin-right:4px}
 </style>
 <div class="admin-wrap">
 <div class="container-fluid">
-<div class="row">
-<div class="col-12 mb-4">
-<h1 class="admin-title"><i class="fas fa-envelope ms-2"></i> الرسائل (<%= msgs.length %>)</h1>
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap:8px">
+<h1 class="admin-title mb-0"><i class="fas fa-envelope ms-2"></i> الرسائل (<%= msgs.length %><% var unread = msgs.filter(function(x){return !x.read}).length; if (unread) { %> <span class="unread-badge"><%= unread %></span><% } %>)</h1>
+<div class="d-flex gap-2">
+<button class="btn btn-outline-success btn-sm" onclick="var c=0;document.querySelectorAll('.msg-card').forEach(function(el){if(!el.dataset.read){el.querySelector('.msg-body').classList.add('show');fetch('/admin/messages?mark='+el.dataset.id);c++}});if(c)location.reload()" title="عرض الكل مقروء"><i class="fas fa-check-double"></i> تحديد الكل مقروء</button>
+<a href="/admin/messages" class="btn btn-outline-secondary btn-sm"><i class="fas fa-sync"></i> تحديث</a>
 </div>
 </div>
 <% if (msgs.length === 0) { %>
@@ -26,16 +31,16 @@
 <h4>لا توجد رسائل حتى الآن</h4>
 </div>
 <% } else { for (var mi = msgs.length - 1; mi >= 0; mi--) { var m = msgs[mi]; %>
-<div class="message-card" style="<%= m.read ? 'opacity:0.6' : 'border-right:4px solid #157039' %>">
+<div class="message-card msg-card" data-id="<%= m.id %>" data-read="<%= m.read ? '1' : '0' %>" style="<%= m.read ? 'opacity:0.6' : 'border-right:4px solid #157039' %>" onclick="var b=this.querySelector('.msg-body');b.classList.toggle('show')">
 <div class="msg-header">
-<h4><i class="fas fa-user ms-1"></i> <%= m.name || 'غير معروف' %></h4>
-<span class="msg-date"><i class="far fa-clock ms-1"></i> <%= m.date || '' %></span>
+<h4><i class="fas fa-user ms-1"></i> <%= m.name || 'غير معروف' %> <% if (!m.read) { %><span class="unread-badge">جديد</span><% } %></h4>
+<span class="msg-date"><i class="far fa-clock ms-1"></i> <%= m.date || '' %> <span class="msg-toggle"><i class="fas fa-chevron-down"></i></span></span>
 </div>
 <div class="msg-meta">
-<i class="fas fa-envelope ms-1"></i> <a href="mailto:<%= m.email %>"><%= m.email %></a>
+<i class="fas fa-envelope ms-1"></i> <a href="mailto:<%= m.email %>" onclick="event.stopPropagation()"><%= m.email %></a>
 </div>
 <div class="msg-body"><%= m.message %></div>
-<div class="msg-actions">
+<div class="msg-actions" onclick="event.stopPropagation()">
 <% if (!m.read) { %>
 <a href="/admin/messages?mark=<%= m.id %>" class="btn btn-sm btn-outline-success"><i class="fas fa-check ms-1"></i> تحديد كمقروء</a>
 <% } %>

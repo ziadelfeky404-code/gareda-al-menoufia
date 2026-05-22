@@ -860,13 +860,19 @@ app.all('/admin/article-delete/:id', requireAdmin, (req, res) => {
 // --- SECTIONS ---
 app.get('/admin/sections', requireAdmin, (req, res) => {
   const sectionsData = getSections();
+  const allArticles = loadArticles();
+  const sectionArticleCounts = {};
+  for (const a of allArticles) {
+    const s = a.section || '';
+    sectionArticleCounts[s] = (sectionArticleCounts[s] || 0) + 1;
+  }
 
   const deleted = req.query.deleted === '1' ? 'تم حذف القسم بنجاح' : '';
   const added = req.query.added === '1' ? 'تم إضافة القسم بنجاح' : '';
 
   res.render('admin/sections', {
     title: 'الأقسام',
-    sectionsData,
+    sectionsData, sectionArticleCounts,
     message: deleted || added || '', error: '',
     admin: req.session.admin
   });
