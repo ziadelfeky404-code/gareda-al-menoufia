@@ -2,20 +2,20 @@
     "site_name": "جامعة المنوفية",
     "site_subtitle": "البوابة الإخبارية الرسمية",
     "site_url": "",
-    "logo_url": "https:\/\/menofia.education\/pluginfile.php\/1\/theme_moove\/logo\/1777367216\/logo.png",
-    "favicon_url": "https:\/\/menofia.education\/pluginfile.php\/1\/theme_moove\/logo\/1777367216\/logo.png",
+    "logo_url": "https://menofia.education/pluginfile.php/1/theme_moove/logo/1777367216/logo.png",
+    "favicon_url": "https://menofia.education/pluginfile.php/1/theme_moove/logo/1777367216/logo.png",
     "primary_color": "#157039",
     "primary_dark": "#0f5a2d",
     "primary_light": "#1a8a45",
     "dark_color": "#091e3a",
-    "facebook_url": "https:\/\/www.facebook.com\/menofia.edu.eg\/directory_links?locale=ar_AR",
-    "twitter_url": "https:\/\/x.com\/MinoufiyaUniver",
-    "youtube_url": "https:\/\/youtube.com\/@menoufiauniversitychannel9727",
-    "instagram_url": "https:\/\/www.instagram.com\/menoufiauniversity\/",
-    "linkedin_url": "https:\/\/www.linkedin.com\/school\/menofia-university\/?originalSubdomain=eg",
-    "google_news_url": "https:\/\/news.google.com\/publications\/CAAqBwgKMNj3mgswkv-yAw",
+    "facebook_url": "https://www.facebook.com/menofia.edu.eg/directory_links?locale=ar_AR",
+    "twitter_url": "https://x.com/MinoufiyaUniver",
+    "youtube_url": "https://youtube.com/@menoufiauniversitychannel9727",
+    "instagram_url": "https://www.instagram.com/menoufiauniversity/",
+    "linkedin_url": "https://www.linkedin.com/school/menofia-university/?originalSubdomain=eg",
+    "google_news_url": "https://news.google.com/publications/CAAqBwgKMNj3mgswkv-yAw",
     "address": "شبين الكوم - المنوفية - مصر",
-    "maps_url": "https:\/\/www.google.com\/maps?q=Gamal+Abd+El-Nasir,+Qism+Shebeen+El-Kom,+Shibin+el+Kom,+Menofia+Governorate+6131567",
+    "maps_url": "https://www.google.com/maps?q=Gamal+Abd+El-Nasir,+Qism+Shebeen+El-Kom,+Shibin+el+Kom,+Menofia+Governorate+6131567",
     "phone": "048-2222111",
     "fax": "048-2222112",
     "email": "info@mo.edu.eg",
@@ -23,6 +23,8 @@
     "editor_name": "رئيس التحرير",
     "editor_title": "أ.د. أحمد القاصد",
     "ticker_news_ids": [
+        623,
+        278,
         2,
         5,
         8,
@@ -30,8 +32,7 @@
         28,
         30,
         22,
-        50,
-        20
+        50
     ],
     "sections": [
         {
@@ -74,5 +75,20 @@
             "slug": "takarer",
             "file": ""
         }
+    ],
+    "hero_slide_pins": [
+        623,
+        278,
+        2,
+        5,
+        17,
+        28,
+        30
+    ],
+    "hero_pins": [
+        1,
+        3,
+        7,
+        22
     ]
 }
