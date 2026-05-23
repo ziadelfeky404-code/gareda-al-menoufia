@@ -4,7 +4,7 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
-const supabase = require('./supabase');
+const github = require('./github-store');
 
 const app = express();
 
@@ -52,24 +52,6 @@ const SECTION_FILE_MAP = {
 // --- Data helpers (module-level cache) ---
 let _articles = null;
 let _settings = null;
-let _supabaseReady = false;
-
-// Seed Supabase from file data on cold start
-if (supabase.isActive()) {
-  setTimeout(async () => {
-    try {
-      const articles = JSON.parse(fs.readFileSync(ARTICLES_FILE, 'utf8'));
-      const settings = JSON.parse(fs.readFileSync(SETTINGS_FILE, 'utf8'));
-      let messages = [];
-      try { messages = JSON.parse(fs.readFileSync(MESSAGES_FILE, 'utf8')); } catch(e2) {}
-      const sections = getSections();
-      await supabase.seedFromFiles(articles, settings, messages, sections);
-      _supabaseReady = true;
-      console.log('Supabase seeded and ready');
-    } catch (e) { console.error('Supabase seed error:', e.message); }
-  }, 0);
-}
-
 function loadArticles() {
   if (_articles) return _articles;
   try {
@@ -95,7 +77,7 @@ function saveArticles(data) {
   const dir = path.dirname(ARTICLES_FILE);
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
   fs.writeFileSync(ARTICLES_FILE, JSON.stringify(data, null, 4), 'utf8');
-  if (supabase.isActive()) supabase.saveArticles(data).catch(e => console.error('Supabase save error:', e.message));
+  if (github.isActive()) github.commitArticles(data).catch(e => console.error('GitHub save error:', e.message));
 }
 
 function saveSettings(data) {
@@ -103,7 +85,7 @@ function saveSettings(data) {
   const dir = path.dirname(SETTINGS_FILE);
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
   fs.writeFileSync(SETTINGS_FILE, JSON.stringify(data, null, 4), 'utf8');
-  if (supabase.isActive()) supabase.saveSettings(data).catch(e => console.error('Supabase save error:', e.message));
+  if (github.isActive()) github.commitSettings(data).catch(e => console.error('GitHub save error:', e.message));
 }
 
 function getSetting(key, def) {
@@ -166,7 +148,7 @@ function sectionSlug(sectionName) {
 
 function saveSections(data) {
   setSetting('sections', data);
-  if (supabase.isActive()) supabase.saveSections(data).catch(e => console.error('Supabase saveSections error:', e.message));
+  if (github.isActive()) github.commitSettings(loadSettings()).catch(e => console.error('GitHub saveSettings error:', e.message));
 }
 
 function normalizeArabic(s) {
@@ -560,7 +542,7 @@ app.post('/contact', (req, res) => {
     const dir = path.dirname(MESSAGES_FILE);
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
     fs.writeFileSync(MESSAGES_FILE, JSON.stringify(msgs, null, 4), 'utf8');
-    if (supabase.isActive()) supabase.saveMessages(msgs).catch(e => {});
+    if (github.isActive()) github.commitMessages(msgs).catch(e => {});
     return res.render('contact', { title: 'اتصل بنا', sent: true, error: '' });
   }
 
@@ -1114,7 +1096,7 @@ app.get('/admin/messages', requireAdmin, (req, res) => {
     let all = msgs;
     for (const m of all) { if (m.id == markId) m.read = true; }
     fs.writeFileSync(MESSAGES_FILE, JSON.stringify(all, null, 4), 'utf8');
-    if (supabase.isActive()) supabase.saveMessages(all).catch(e => {});
+    if (github.isActive()) github.commitMessages(all).catch(e => {});
     return res.redirect('/admin/messages');
   }
 
@@ -1123,7 +1105,7 @@ app.get('/admin/messages', requireAdmin, (req, res) => {
     let all = msgs;
     all = all.filter(m => m.id != delId);
     fs.writeFileSync(MESSAGES_FILE, JSON.stringify(all, null, 4), 'utf8');
-    if (supabase.isActive()) supabase.saveMessages(all).catch(e => {});
+    if (github.isActive()) github.commitMessages(all).catch(e => {});
     return res.redirect('/admin/messages');
   }
 
