@@ -1,10 +1,7 @@
 [
     {
-        "id": "1779336937_2a6ecb9f",
-        "name": "زياد الفقي",
-        "email": "g0h00d@outlook.com",
-        "message": "ببببببببببببببببببببببببببب",
-        "date": "2026-05-21 07:15:38",
-        "read": true
+        "id": "1",
+        "name": "Test",
+        "message": "hello"
     }
 ]
