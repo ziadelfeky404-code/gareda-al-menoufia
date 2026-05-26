@@ -16,39 +16,19 @@ const UPLOADS_PATH = path.join(ROOT, 'uploads');
 const DATA_PATH = (() => {
   const p = process.env.VERCEL ? '/tmp/data' : path.join(ROOT, 'data');
   if (!fs.existsSync(p)) fs.mkdirSync(p, { recursive: true });
-  // On Vercel cold start, seed /tmp/data from GitHub (latest) or project data (fallback)
-  if (process.env.VERCEL) {
-    const fetchFile = (name) => {
-      try {
-        const url = 'https://raw.githubusercontent.com/ziadelfeky404-code/gareda-al-menoufia/master/data/' + name;
-        const https = require('https');
-        return new Promise((resolve) => {
-          https.get(url, (res) => {
-            if (res.statusCode !== 200) { resolve(false); return; }
-            let d = '';
-            res.on('data', c => d += c);
-            res.on('end', () => {
-              try { JSON.parse(d); fs.writeFileSync(path.join(p, name), d, 'utf8'); resolve(true); }
-              catch (e) { resolve(false); }
-            });
-          }).on('error', () => resolve(false));
-        });
-      } catch (e) { return false; }
-    };
-    (async () => {
-      const files = ['articles.json', 'settings.json', 'messages.json'];
-      for (const f of files) {
-        const ok = await fetchFile(f);
-        if (!ok) { // fallback to project data
-          try {
-            const src = path.join(ROOT, 'data', f);
-            const dest = path.join(p, f);
-            if (fs.existsSync(src) && !fs.existsSync(dest)) fs.copyFileSync(src, dest);
-          } catch (e) {}
+  // Seed /tmp/data from project data (synchronous - always available)
+  try {
+    const projectData = path.join(ROOT, 'data');
+    if (fs.existsSync(projectData)) {
+      for (const f of fs.readdirSync(projectData)) {
+        const dest = path.join(p, f);
+        if (!fs.existsSync(dest)) {
+          const src = path.join(projectData, f);
+          if (f.endsWith('.json')) fs.copyFileSync(src, dest);
         }
       }
-    })();
-  }
+    }
+  } catch (e) { console.error('Seed error:', e.message); }
   return p;
 })();
 
@@ -77,11 +57,24 @@ function fetchFromGitHub(name) {
   return new Promise((resolve) => {
     try {
       const https = require('https');
-      https.get('https://raw.githubusercontent.com/ziadelfeky404-code/gareda-al-menoufia/master/data/' + name, (res) => {
-        if (res.statusCode !== 200) { resolve(null); return; }
+      const opts = {
+        hostname: 'api.github.com',
+        path: '/repos/ziadelfeky404-code/gareda-al-menoufia/contents/data/' + name,
+        headers: { 'User-Agent': 'gareda-al-menoufia', 'Accept': 'application/vnd.github.v3+json' }
+      };
+      if (process.env.GITHUB_TOKEN) opts.headers['Authorization'] = 'Bearer ' + process.env.GITHUB_TOKEN;
+      https.get(opts, (res) => {
         let d = '';
         res.on('data', c => d += c);
-        res.on('end', () => { try { JSON.parse(d); resolve(d); } catch (e) { resolve(null); } });
+        res.on('end', () => {
+          if (res.statusCode !== 200) { resolve(null); return; }
+          try {
+            const json = JSON.parse(d);
+            const content = Buffer.from(json.content, 'base64').toString('utf8');
+            JSON.parse(content); // validate JSON
+            resolve(content);
+          } catch (e) { resolve(null); }
+        });
       }).on('error', () => resolve(null));
     } catch (e) { resolve(null); }
   });
@@ -272,7 +265,7 @@ function requireAdmin(req, res, next) {
 // --- Make helpers available in all views ---
 app.use((req, res, next) => {
   // Periodically refresh data cache from GitHub (fire-and-forget)
-  if (process.env.VERCEL) ensureFreshData();
+  if (process.env.VERCEL) ensureFreshData().catch(() => {});
   res.locals.getSetting = getSetting;
   res.locals.getSections = getSections;
   res.locals.sectionSlug = sectionSlug;

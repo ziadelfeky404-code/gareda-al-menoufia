@@ -4,14 +4,8 @@ const TOKEN = process.env.GITHUB_TOKEN || '';
 const REPO = 'ziadelfeky404-code/gareda-al-menoufia';
 const BRANCH = 'master';
 
-let _shaCache = {};
-
-function isActive() {
-  return !!TOKEN;
-}
-
 function getFileSha(path, callback) {
-  if (_shaCache[path]) return callback(null, _shaCache[path]);
+  // Always fetch fresh SHA from GitHub to avoid 409 conflicts with other instances
   const req = https.request({
     hostname: 'api.github.com',
     path: '/repos/' + REPO + '/contents/' + path + '?ref=' + BRANCH,
@@ -68,10 +62,6 @@ function commitFile(path, content, callback) {
       res.on('data', c => data += c);
       res.on('end', () => {
         if (res.statusCode === 200 || res.statusCode === 201) {
-          try {
-            const json = JSON.parse(data);
-            _shaCache[path] = json.content.sha;
-          } catch (e) {}
           if (callback) callback(null);
         } else {
           if (callback) callback(new Error('PUT ' + path + ' status ' + res.statusCode + ': ' + data.substring(0, 200)));
