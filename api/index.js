@@ -33,21 +33,21 @@ const DATA_PATH = (() => {
   return p;
 })();
 
-// Cold start: fetch latest data from Supabase (fire-and-forget, updates cache + files)
-(async () => {
-  try {
-    const arts = await supabase.loadArticles();
+// Cold start: fetch latest data from Supabase with 5s timeout
+setTimeout(() => {
+  supabase.loadArticles().then(arts => {
     if (arts && arts.length) {
       _articles = arts;
-      fs.writeFileSync(path.join(DATA_PATH, 'articles.json'), JSON.stringify(arts, null, 4), 'utf8');
+      try { fs.writeFileSync(path.join(DATA_PATH, 'articles.json'), JSON.stringify(arts, null, 4), 'utf8'); } catch(e) {}
     }
-    const sets = await supabase.loadSettings();
+  }).catch(() => {});
+  supabase.loadSettings().then(sets => {
     if (sets && Object.keys(sets).length) {
       _settings = sets;
-      fs.writeFileSync(path.join(DATA_PATH, 'settings.json'), JSON.stringify(sets, null, 4), 'utf8');
+      try { fs.writeFileSync(path.join(DATA_PATH, 'settings.json'), JSON.stringify(sets, null, 4), 'utf8'); } catch(e) {}
     }
-  } catch (e) { /* Supabase not available, use file fallback */ }
-})();
+  }).catch(() => {});
+}, 100); // fire after module is loaded, non-blocking
 
 const ARTICLES_FILE = path.join(DATA_PATH, 'articles.json');
 const SETTINGS_FILE = path.join(DATA_PATH, 'settings.json');
@@ -69,6 +69,8 @@ const SECTION_FILE_MAP = {
 let _articles = null;
 let _settings = null;
 let _lastFetch = 0;
+let _dirtyCount = 0;
+let _lastDirty = 0;
 
 function fetchFromGitHub(name) {
   return new Promise((resolve) => {
@@ -119,25 +121,38 @@ function loadSettings() {
 
 function saveArticles(data) {
   _articles = data;
+  _dirtyCount++;
+  _lastDirty = Date.now();
   const dir = path.dirname(ARTICLES_FILE);
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
   fs.writeFileSync(ARTICLES_FILE, JSON.stringify(data, null, 4), 'utf8');
-  supabase.saveArticles(data).catch(e => console.error('Supabase articles error:', e.message));
-  if (github.isActive()) github.commitArticles(data).catch(e => console.error('GitHub save error:', e.message));
+  Promise.all([
+    supabase.saveArticles(data).catch(e => console.error('Supabase articles error:', e.message)),
+    github.isActive() ? github.commitArticles(data).catch(e => console.error('GitHub save error:', e.message)) : Promise.resolve()
+  ]).then(() => { if (_dirtyCount > 0) _dirtyCount--; });
 }
 
 function saveSettings(data) {
   _settings = data;
+  _dirtyCount++;
+  _lastDirty = Date.now();
   const dir = path.dirname(SETTINGS_FILE);
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
   fs.writeFileSync(SETTINGS_FILE, JSON.stringify(data, null, 4), 'utf8');
-  supabase.saveSettings(data).catch(e => console.error('Supabase settings error:', e.message));
-  if (github.isActive()) github.commitSettings(data).catch(e => console.error('GitHub save error:', e.message));
+  Promise.all([
+    supabase.saveSettings(data).catch(e => console.error('Supabase settings error:', e.message)),
+    github.isActive() ? github.commitSettings(data).catch(e => console.error('GitHub save error:', e.message)) : Promise.resolve()
+  ]).then(() => { if (_dirtyCount > 0) _dirtyCount--; });
 }
 
-async function ensureFreshData() {
+function ensureFreshData() {
   const now = Date.now();
   if (now - _lastFetch < 10000) return;
+  // Don't refresh while saves are in-flight (Supabase might have stale data)
+  if (_dirtyCount > 0) {
+    if (now - _lastDirty > 30000) _dirtyCount = 0; // timeout after 30s
+    else return;
+  }
   _lastFetch = now;
   supabase.loadArticles().then(articles => { if (articles && articles.length) { _articles = articles; fs.writeFileSync(ARTICLES_FILE, JSON.stringify(articles, null, 4), 'utf8'); } }).catch(() => {});
   supabase.loadSettings().then(settings => { if (settings && Object.keys(settings).length) { _settings = settings; fs.writeFileSync(SETTINGS_FILE, JSON.stringify(settings, null, 4), 'utf8'); } }).catch(() => {});
@@ -203,8 +218,6 @@ function sectionSlug(sectionName) {
 
 function saveSections(data) {
   setSetting('sections', data);
-  supabase.saveSettings(loadSettings()).catch(e => console.error('Supabase settings error:', e.message));
-  if (github.isActive()) github.commitSettings(loadSettings()).catch(e => console.error('GitHub saveSettings error:', e.message));
 }
 
 function normalizeArabic(s) {
@@ -284,7 +297,7 @@ function requireAdmin(req, res, next) {
 // --- Make helpers available in all views ---
 app.use((req, res, next) => {
   // Periodically refresh data cache from Supabase (fire-and-forget)
-  if (process.env.VERCEL) ensureFreshData().catch(() => {});
+  if (process.env.VERCEL) ensureFreshData();
   res.locals.getSetting = getSetting;
   res.locals.getSections = getSections;
   res.locals.sectionSlug = sectionSlug;
