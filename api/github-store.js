@@ -6,6 +6,10 @@ const BRANCH = 'master';
 
 let _shaCache = {};
 
+function isActive() {
+  return !!TOKEN;
+}
+
 function getFileSha(path, callback) {
   // Always fetch fresh SHA from GitHub to avoid 409 conflicts with other instances
   const req = https.request({
