@@ -16,19 +16,38 @@ const UPLOADS_PATH = path.join(ROOT, 'uploads');
 const DATA_PATH = (() => {
   const p = process.env.VERCEL ? '/tmp/data' : path.join(ROOT, 'data');
   if (!fs.existsSync(p)) fs.mkdirSync(p, { recursive: true });
-  // On Vercel cold start, seed /tmp/data from the project data (read-only)
+  // On Vercel cold start, seed /tmp/data from GitHub (latest) or project data (fallback)
   if (process.env.VERCEL) {
-    try {
-      const projectData = path.join(ROOT, 'data');
-      if (fs.existsSync(projectData)) {
-        for (const f of fs.readdirSync(projectData)) {
-          const dest = path.join(p, f);
-          if (!fs.existsSync(dest)) {
-            fs.copyFileSync(path.join(projectData, f), dest);
-          }
+    const fetchFile = (name) => {
+      try {
+        const url = 'https://raw.githubusercontent.com/ziadelfeky404-code/gareda-al-menoufia/master/data/' + name;
+        const https = require('https');
+        return new Promise((resolve) => {
+          https.get(url, (res) => {
+            if (res.statusCode !== 200) { resolve(false); return; }
+            let d = '';
+            res.on('data', c => d += c);
+            res.on('end', () => {
+              try { JSON.parse(d); fs.writeFileSync(path.join(p, name), d, 'utf8'); resolve(true); }
+              catch (e) { resolve(false); }
+            });
+          }).on('error', () => resolve(false));
+        });
+      } catch (e) { return false; }
+    };
+    (async () => {
+      const files = ['articles.json', 'settings.json', 'messages.json'];
+      for (const f of files) {
+        const ok = await fetchFile(f);
+        if (!ok) { // fallback to project data
+          try {
+            const src = path.join(ROOT, 'data', f);
+            const dest = path.join(p, f);
+            if (fs.existsSync(src) && !fs.existsSync(dest)) fs.copyFileSync(src, dest);
+          } catch (e) {}
         }
       }
-    } catch (e) { console.error('Seed /tmp/data error:', e.message); }
+    })();
   }
   return p;
 })();
@@ -52,6 +71,22 @@ const SECTION_FILE_MAP = {
 // --- Data helpers (module-level cache) ---
 let _articles = null;
 let _settings = null;
+let _lastFetch = 0;
+
+function fetchFromGitHub(name) {
+  return new Promise((resolve) => {
+    try {
+      const https = require('https');
+      https.get('https://raw.githubusercontent.com/ziadelfeky404-code/gareda-al-menoufia/master/data/' + name, (res) => {
+        if (res.statusCode !== 200) { resolve(null); return; }
+        let d = '';
+        res.on('data', c => d += c);
+        res.on('end', () => { try { JSON.parse(d); resolve(d); } catch (e) { resolve(null); } });
+      }).on('error', () => resolve(null));
+    } catch (e) { resolve(null); }
+  });
+}
+
 function loadArticles() {
   if (_articles) return _articles;
   try {
@@ -86,6 +121,15 @@ function saveSettings(data) {
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
   fs.writeFileSync(SETTINGS_FILE, JSON.stringify(data, null, 4), 'utf8');
   if (github.isActive()) github.commitSettings(data).catch(e => console.error('GitHub save error:', e.message));
+}
+
+async function ensureFreshData() {
+  const now = Date.now();
+  if (now - _lastFetch < 10000) return; // max once per 10s
+  _lastFetch = now;
+  // Try to fetch latest from GitHub in background (don't block)
+  fetchFromGitHub('articles.json').then(d => { if (d) { try { _articles = JSON.parse(d); fs.writeFileSync(ARTICLES_FILE, d, 'utf8'); } catch(e) {} } });
+  fetchFromGitHub('settings.json').then(d => { if (d) { try { _settings = JSON.parse(d); fs.writeFileSync(SETTINGS_FILE, d, 'utf8'); } catch(e) {} } });
 }
 
 function getSetting(key, def) {
@@ -227,6 +271,8 @@ function requireAdmin(req, res, next) {
 
 // --- Make helpers available in all views ---
 app.use((req, res, next) => {
+  // Periodically refresh data cache from GitHub (fire-and-forget)
+  if (process.env.VERCEL) ensureFreshData();
   res.locals.getSetting = getSetting;
   res.locals.getSections = getSections;
   res.locals.sectionSlug = sectionSlug;
