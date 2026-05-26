@@ -1425,12 +1425,20 @@ app.get('/__debug', (req, res) => {
     canWrite = true;
     fs.unlinkSync(path.join(dataDir, '.test'));
   } catch (e) { canWrite = 'NO: ' + e.message; }
+  let rootFiles = [];
+  try { if (fs.existsSync(ROOT)) rootFiles = fs.readdirSync(ROOT).slice(0, 30); } catch (e) {}
+  let projectDataExists = fs.existsSync(path.join(ROOT, 'data'));
+  let projectDataFiles = [];
+  try { if (projectDataExists) projectDataFiles = fs.readdirSync(path.join(ROOT, 'data')).slice(0, 20); } catch (e) {}
   res.json({
     vercel: !!process.env.VERCEL,
     dataPath: dataDir,
     dataFiles,
     canWrite,
     articles: loadArticles().length,
+    rootFiles,
+    projectDataExists,
+    projectDataFiles,
     uptime: process.uptime()
   });
 });
