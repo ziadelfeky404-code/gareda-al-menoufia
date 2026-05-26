@@ -873,11 +873,12 @@ app.get('/admin/sections', requireAdmin, (req, res) => {
 
   const deleted = req.query.deleted === '1' ? 'تم حذف القسم بنجاح' : '';
   const added = req.query.added === '1' ? 'تم إضافة القسم بنجاح' : '';
+  const updated = req.query.updated === '1' ? 'تم تحديث القسم بنجاح' : '';
 
   res.render('admin/sections', {
     title: 'الأقسام',
     sectionsData, sectionArticleCounts,
-    message: deleted || added || '', error: '',
+    message: deleted || added || updated || '', error: '',
     admin: req.session.admin
   });
 });
@@ -896,7 +897,39 @@ app.post('/admin/sections', requireAdmin, (req, res) => {
     }
   }
 
-  if (req.body.add_section) {
+  if (req.body.edit_slug) {
+    const editSlug = req.body.edit_slug.trim();
+    const idx = sectionsData.findIndex(s => s.slug === editSlug);
+    if (idx === -1) {
+      error = 'القسم غير موجود';
+    } else {
+      const oldName = sectionsData[idx].name;
+      const newName = (req.body.name || '').trim();
+      const newSlug = (req.body.slug || '').trim();
+      if (!newName || !newSlug) {
+        error = 'اسم القسم والرابط مطلوبان';
+      } else if (newName !== oldName && sectionsData.find(s => s.name === newName && s.slug !== editSlug)) {
+        error = 'اسم القسم موجود بالفعل';
+      } else if (newSlug !== editSlug && sectionsData.find(s => s.slug === newSlug)) {
+        error = 'الرابط موجود بالفعل';
+      } else {
+        sectionsData[idx].name = newName;
+        sectionsData[idx].slug = newSlug;
+        saveSections(sectionsData);
+        if (newName !== oldName) {
+          const all = loadArticles();
+          let changed = 0;
+          for (const a of all) {
+            if (a.section === oldName) { a.section = newName; changed++; }
+          }
+          if (changed) saveArticles(all);
+        }
+        return res.redirect('/admin/sections?updated=1');
+      }
+    }
+  }
+
+  if (!req.body.edit_slug && !req.body.delete_slug) {
     const name = (req.body.name || '').trim();
     if (!name) {
       error = 'اسم القسم مطلوب';
@@ -917,6 +950,14 @@ app.post('/admin/sections', requireAdmin, (req, res) => {
   res.render('admin/sections', {
     title: 'الأقسام',
     sectionsData: getSections(),
+    sectionArticleCounts: (() => {
+      const counts = {};
+      for (const a of loadArticles()) {
+        const s = a.section || '';
+        counts[s] = (counts[s] || 0) + 1;
+      }
+      return counts;
+    })(),
     message, error,
     admin: req.session.admin
   });

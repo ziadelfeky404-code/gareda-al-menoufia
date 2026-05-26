@@ -14,7 +14,18 @@
 .section-form label{font-size:13px;font-weight:700;color:#555;display:block;margin-bottom:3px}
 .section-form input,.section-form select{padding:8px 12px;border:2px solid #ddd;border-radius:6px;font-size:14px;font-family:'Cairo',sans-serif;width:100%}
 .section-form input:focus,.section-form select:focus{outline:none;border-color:#157039}
+.section-edit-form{display:none;margin-top:10px;padding:12px 15px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px}
+.section-edit-form.show{display:block}
+.section-edit-form .form-row{display:flex;gap:8px;align-items:end;flex-wrap:wrap}
+.section-edit-form .form-group{flex:1;min-width:120px}
+.section-edit-form label{font-size:12px;font-weight:700;color:#555;display:block;margin-bottom:2px}
+.section-edit-form input{padding:6px 10px;border:2px solid #ddd;border-radius:4px;font-size:13px;font-family:'Cairo',sans-serif;width:100%}
+.section-edit-form input:focus{outline:none;border-color:#157039}
+.section-edit-form .btn-save{padding:6px 14px;border-radius:4px;font-size:12px;font-weight:700;border:none;cursor:pointer}
 </style>
+<script>
+function toggleEdit(slug){var f=document.getElementById('edit-'+slug);f.classList.toggle('show')}
+</script>
 <div class="admin-wrap">
 <div class="container-fluid">
 <div class="row">
@@ -59,11 +70,30 @@
 </div>
 </div>
 <div class="sec-actions">
+<button onclick="toggleEdit('<%= sec.slug %>')" class="btn btn-outline-warning btn-sm" title="تعديل" style="font-size:11px;padding:4px 8px"><i class="fas fa-edit"></i></button>
 <a href="/admin/section-order/<%= sec.slug %>" class="btn btn-outline-primary btn-sm" title="ترتيب المقالات" style="font-size:11px;padding:4px 8px"><i class="fas fa-sort"></i></a>
 <a href="/admin/articles?section=<%= sec.slug %>" class="btn btn-outline-secondary btn-sm" title="عرض المقالات" style="font-size:11px;padding:4px 8px"><i class="fas fa-newspaper"></i></a>
 <form method="post" action="/admin/sections" style="display:inline" onsubmit="return confirm('حذف القسم "<%= sec.name %>"؟')">
 <input type="hidden" name="delete_slug" value="<%= sec.slug %>">
 <button type="submit" class="btn btn-danger btn-sm" title="حذف" style="font-size:11px;padding:4px 8px"><i class="fas fa-trash"></i></button>
+</form>
+</div>
+<div class="section-edit-form" id="edit-<%= sec.slug %>">
+<form method="post" action="/admin/sections">
+<input type="hidden" name="edit_slug" value="<%= sec.slug %>">
+<div class="form-row">
+<div class="form-group">
+<label>اسم القسم</label>
+<input type="text" name="name" value="<%= sec.name %>" required>
+</div>
+<div class="form-group">
+<label>الرابط (slug)</label>
+<input type="text" name="slug" value="<%= sec.slug %>" required>
+</div>
+<div class="form-group">
+<button type="submit" class="btn-save" style="background:#157039;color:#fff"><i class="fas fa-save"></i> حفظ</button>
+</div>
+</div>
 </form>
 </div>
 </div>
