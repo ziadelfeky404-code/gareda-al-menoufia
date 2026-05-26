@@ -4,6 +4,8 @@ const TOKEN = process.env.GITHUB_TOKEN || '';
 const REPO = 'ziadelfeky404-code/gareda-al-menoufia';
 const BRANCH = 'master';
 
+let _shaCache = {};
+
 function getFileSha(path, callback) {
   // Always fetch fresh SHA from GitHub to avoid 409 conflicts with other instances
   const req = https.request({
