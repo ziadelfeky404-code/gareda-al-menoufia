@@ -5,6 +5,7 @@ const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
 const github = require('./github-store');
+const supabase = require('./supabase-store');
 
 const app = express();
 
@@ -30,6 +31,22 @@ const DATA_PATH = (() => {
     }
   } catch (e) { console.error('Seed error:', e.message); }
   return p;
+})();
+
+// Cold start: fetch latest data from Supabase (fire-and-forget, updates cache + files)
+(async () => {
+  try {
+    const arts = await supabase.loadArticles();
+    if (arts && arts.length) {
+      _articles = arts;
+      fs.writeFileSync(path.join(DATA_PATH, 'articles.json'), JSON.stringify(arts, null, 4), 'utf8');
+    }
+    const sets = await supabase.loadSettings();
+    if (sets && Object.keys(sets).length) {
+      _settings = sets;
+      fs.writeFileSync(path.join(DATA_PATH, 'settings.json'), JSON.stringify(sets, null, 4), 'utf8');
+    }
+  } catch (e) { /* Supabase not available, use file fallback */ }
 })();
 
 const ARTICLES_FILE = path.join(DATA_PATH, 'articles.json');
@@ -105,6 +122,7 @@ function saveArticles(data) {
   const dir = path.dirname(ARTICLES_FILE);
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
   fs.writeFileSync(ARTICLES_FILE, JSON.stringify(data, null, 4), 'utf8');
+  supabase.saveArticles(data).catch(e => console.error('Supabase articles error:', e.message));
   if (github.isActive()) github.commitArticles(data).catch(e => console.error('GitHub save error:', e.message));
 }
 
@@ -113,16 +131,16 @@ function saveSettings(data) {
   const dir = path.dirname(SETTINGS_FILE);
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
   fs.writeFileSync(SETTINGS_FILE, JSON.stringify(data, null, 4), 'utf8');
+  supabase.saveSettings(data).catch(e => console.error('Supabase settings error:', e.message));
   if (github.isActive()) github.commitSettings(data).catch(e => console.error('GitHub save error:', e.message));
 }
 
 async function ensureFreshData() {
   const now = Date.now();
-  if (now - _lastFetch < 10000) return; // max once per 10s
+  if (now - _lastFetch < 10000) return;
   _lastFetch = now;
-  // Try to fetch latest from GitHub in background (don't block)
-  fetchFromGitHub('articles.json').then(d => { if (d) { try { _articles = JSON.parse(d); fs.writeFileSync(ARTICLES_FILE, d, 'utf8'); } catch(e) {} } });
-  fetchFromGitHub('settings.json').then(d => { if (d) { try { _settings = JSON.parse(d); fs.writeFileSync(SETTINGS_FILE, d, 'utf8'); } catch(e) {} } });
+  supabase.loadArticles().then(articles => { if (articles && articles.length) { _articles = articles; fs.writeFileSync(ARTICLES_FILE, JSON.stringify(articles, null, 4), 'utf8'); } }).catch(() => {});
+  supabase.loadSettings().then(settings => { if (settings && Object.keys(settings).length) { _settings = settings; fs.writeFileSync(SETTINGS_FILE, JSON.stringify(settings, null, 4), 'utf8'); } }).catch(() => {});
 }
 
 function getSetting(key, def) {
@@ -185,6 +203,7 @@ function sectionSlug(sectionName) {
 
 function saveSections(data) {
   setSetting('sections', data);
+  supabase.saveSettings(loadSettings()).catch(e => console.error('Supabase settings error:', e.message));
   if (github.isActive()) github.commitSettings(loadSettings()).catch(e => console.error('GitHub saveSettings error:', e.message));
 }
 
@@ -264,7 +283,7 @@ function requireAdmin(req, res, next) {
 
 // --- Make helpers available in all views ---
 app.use((req, res, next) => {
-  // Periodically refresh data cache from GitHub (fire-and-forget)
+  // Periodically refresh data cache from Supabase (fire-and-forget)
   if (process.env.VERCEL) ensureFreshData().catch(() => {});
   res.locals.getSetting = getSetting;
   res.locals.getSections = getSections;
@@ -581,6 +600,7 @@ app.post('/contact', (req, res) => {
     const dir = path.dirname(MESSAGES_FILE);
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
     fs.writeFileSync(MESSAGES_FILE, JSON.stringify(msgs, null, 4), 'utf8');
+    supabase.saveMessage({ name, email, message }).catch(e => console.error('Supabase message error:', e.message));
     if (github.isActive()) github.commitMessages(msgs).catch(e => {});
     return res.render('contact', { title: 'اتصل بنا', sent: true, error: '' });
   }

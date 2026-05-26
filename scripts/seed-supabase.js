@@ -3,8 +3,8 @@ const fs = require('fs');
 const path = require('path');
 
 // === CONFIGURE THESE ===
-const SUPABASE_URL = ''; // e.g. https://xxxxxxx.supabase.co
-const SUPABASE_KEY = '';  // anon/public key from Settings > API
+const SUPABASE_URL = 'https://qpzxdimqolhgbfhzcjay.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFwenhkaW1xb2xoZ2JmaHpjamF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk0ODQzNDgsImV4cCI6MjA5NTA2MDM0OH0.F-P3LGBgZRircgYOQc16XVa3ytVpi2HRFd6sWXTXxek';
 
 const ROOT = path.resolve(__dirname, '..');
 
